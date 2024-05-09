@@ -1,22 +1,22 @@
 services:
-  firefox:
+  idea-docker:
     build: .
     ports:
-      - 55800:5800
-      - 55900:5900
+      - 5800:5800
+      - 5900:5900
     environment:
-      - ENABLE_CJK_FONT=1
+      - ENABLE_CJK_FONT=0
       - LANG=zh_CN.UTF-8
     deploy:
       resources:
         limits:
           cpus: '2.5'
-          memory: 4Gib
+          memory: 16Gib
           # pids: 1
         reservations:
           cpus: '0.5'
           memory: 100M
-      replicas: ${FIREFOX_REPLICAS:-1}
+      replicas: ${IDEA_REPLICAS:-1}
 
       restart_policy:
         condition: on-failure
@@ -25,7 +25,5 @@ services:
         window: 120s
 
     volumes:
-      - "firefox_data:/config:rw"
+      - "$HOME/workspaces/config:/config:rw"
       - "./fcitx/config:/config/fcitx/config"
-volumes:
-  firefox_data:
