@@ -9,7 +9,6 @@ sudo docker run -d --name=idea \
 -e IDEA_VERSION=2024.1 \
 -e WEB_LISTENING_PORT=5800 \
 -e VNC_LISTENING_PORT=5900 \
--v $(pwd)/fcitx/config:/config/fcitx/config \
 -v $HOME/workspaces/config:/config:rw \
 -v $HOME/ideaIU-2024.1.tar.gz:/ideaIU-2024.1.tar.gz \
 -p 5800:5800 \
