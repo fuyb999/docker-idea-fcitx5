@@ -12,7 +12,10 @@ mkdir -p /config/log/idea
 
 # Take ownership of the config directory content.
 chown -R $USER_ID:$GROUP_ID /config/*
-chmod +x -R /config/xdg/cache/JetBrains
+
+if [ -d "/config/xdg/cache/JetBrains" ]; then
+  chmod +x -R /config/xdg/cache/JetBrains
+fi
 
 if [ ! -f "/config/fcitx/config" ]; then
   cp -r /root/fcitx /config
