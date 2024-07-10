@@ -20,6 +20,7 @@ docker-idea:v24.04.1-alpine-glibc
 ```
 #echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 #echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+echo "https://mirrors.aliyun.com/alpine/edge/main/" >> /etc/apk/repositories
 echo "https://mirrors.aliyun.com/alpine/edge/community/" >> /etc/apk/repositories
 echo "https://mirrors.aliyun.com/alpine/edge/testing/" >> /etc/apk/repositories
 apk update
@@ -27,6 +28,6 @@ apk add --no-cache \
     fcitx5 \
     fcitx5-chinese-addons \
     fcitx5-configtool \
-    fcitx5-gtk \
+    fcitx5-gtk3 \
     fcitx5-qt
 ```
