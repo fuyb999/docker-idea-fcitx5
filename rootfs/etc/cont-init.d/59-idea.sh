@@ -17,10 +17,6 @@ if [ -d "/config/xdg/cache/JetBrains" ]; then
   chmod +x -R /config/xdg/cache/JetBrains
 fi
 
-if [ ! -f "/config/fcitx/config" ]; then
-  cp -r /root/fcitx /config
-fi
-
 # Maximize only the main/initial window.
 #sed-patch 's/<application  type="normal">/<application type="normal" title="other">/' \
 #        /run/openbox/rc.xml

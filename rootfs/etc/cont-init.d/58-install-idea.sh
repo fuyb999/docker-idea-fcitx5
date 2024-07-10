@@ -17,6 +17,6 @@ if [ ! -d "${IDEA_PATH}" ]; then
     echo "--add-opens=java.base/jdk.internal.org.objectweb.asm.tree=ALL-UNNAMED" >> $IDEA_PATH/bin/idea64.vmoptions
 
   # fix Error relocating /usr/local/idea/jbr/lib/libjli.so: __strdup: symbol not found
-  mv $JAVA_HOME/lib/libjli.so $IDEA_PATH/jbr/lib/libjli.so
+  #mv $JAVA_HOME/lib/libjli.so $IDEA_PATH/jbr/lib/libjli.so
 
 fi

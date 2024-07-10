@@ -3,7 +3,7 @@
 The docker image provided is based on `jlesage/firefox` image. In addition, `fcitx` is installed and allows you to switch input language from `en` to `pinyin` using the `ctrl + space` keyboard shortcut.
 
 ```shell
-sudo docker build -t docker-idea:v24.04.1-alpine-glibc .
+sudo docker build -t docker-idea:ubuntu-22.04-v4.6.3 .
 
 sudo docker run -d --name=idea \
 -e IDEA_VERSION=2024.1 \
@@ -13,7 +13,7 @@ sudo docker run -d --name=idea \
 -v $HOME/ideaIU-2024.1.tar.gz:/ideaIU-2024.1.tar.gz \
 -p 5800:5800 \
 -p 5900:5900 \
-docker-idea:v24.04.1-alpine-glibc
+docker-idea:ubuntu-22.04-v4.6.3
 ```
 
 ## install fcitx5-configtool
@@ -30,4 +30,7 @@ apk add --no-cache \
     fcitx5-configtool \
     fcitx5-gtk3 \
     fcitx5-qt
+
+# fcitx5 details
+fcitx5-diagnose
 ```

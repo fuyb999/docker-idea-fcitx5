@@ -1,20 +1,23 @@
 FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.3
 
 ENV LANG=zh_CN.UTF-8
+ENV LANGUAGE=zh_CN:zh
+ENV LC_ALL=zh_CN.UTF-8
 ENV TZ=Asia/Shanghai
 ENV USER_ID=0
 ENV GROUP_ID=0
 
-ENV XMODIFIERS=@im=fcitx
-ENV GTK_IM_MODULE=fcitx
-ENV QT_IM_MODULE=fcitx
+ENV XMODIFIERS=@im=fcitx5
+ENV GTK_IM_MODULE=fcitx5
+ENV QT_IM_MODULE=fcitx5
 
 # ENV JAVA_HOME=/usr
 ENV IDEA_VERSION="2024.1"
 # ENV IDEA_JDK=$JAVA_HOME
 ENV WORKSPACES="/root/IdeaProjects"
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 
-RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
+RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
 
 # Install pkg
 RUN add-pkg \
@@ -28,12 +31,11 @@ RUN add-pkg \
     git \
     unzip \
     zip \
-    font-wqy-zenhei \
-    openjdk17-jdk \
-    openssh-client \
+    openjdk-17-jdk \
     openssh-server \
-    openssh \
-    jq py3-configobj py3-pip py3-setuptools python3 python3-dev
+    jq \
+    python3 python3-dev python3-pip \
+    language-pack-zh-hans fonts-wqy-zenhei
 
 #RUN add-pkg openjdk17-jdk
 #RUN wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.gz -O jdk-17.0.10_linux-x64_bin.tar.gz
@@ -42,10 +44,16 @@ RUN add-pkg \
 # Install fcitx and fcitx-pinyin
 RUN add-pkg \
     fcitx5 fcitx5-chinese-addons
+RUN mkdir -p $XDG_CONFIG_HOME/fcitx5
+COPY fcitx/. $XDG_CONFIG_HOME/fcitx5
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
   && sed -i 's#touch /var/run/openbox/openbox.ready#sh -c /etc/services.d/openbox/startup.sh#' /etc/services.d/openbox/params
+
+# alt+tab change bettwen idea and firefox
+# Apline: RUN sed-patch 's/Navigator/unknown/g' /etc/openbox/main-window-selection.xml
+ADD ./openbox /etc/openbox
 
 # Install ja-netfilter
 ADD ja-netfilter-all.zip .
@@ -71,9 +79,6 @@ RUN \
     set-cont-env DOCKER_IMAGE_VERSION "${DOCKER_IMAGE_VERSION}" && \
     true
 
-# alt+tab change bettwen idea and firefox
-RUN sed-patch 's/Navigator/unknown/g' /etc/openbox/main-window-selection.xml
-
 # Metadata.
 LABEL \
       org.label-schema.name="idea" \
@@ -83,14 +88,13 @@ LABEL \
 
 WORKDIR "${WORKSPACES}"
 
-#COPY --from=jetbrains/runtime:jbr21env_musl_x64 /jdk20 /usr/local/jdk21
-#ENV IDEA_JDK=/usr/lib/jvm/java-17-openjdk
-#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/idea/jbr/lib/server
-
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-# ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib
-
-RUN mkdir -p ~/.config/fcitx5
-COPY fcitx/. ~/.config/fcitx5
 #RUN wget https://addons.mozilla.org/firefox/downloads/file/4166471/#chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
 #RUN /usr/bin/firefox -silent -install-global-extension ./chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
+
+#RUN add-pkg \
+#     fcitx5-frontend-gtk4 \
+#     fcitx5-frontend-gtk3 \
+#     fcitx5-frontend-gtk2 \
+#     fcitx5-frontend-qt5 \
+#     fcitx5-config-qt dbus-launch
+#RUN add-pkg kde-config-fcitx5
