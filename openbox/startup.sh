@@ -1,4 +1,4 @@
 touch /var/run/openbox/openbox.ready &
 
-# 禁用unicode,chttrans插件，以解决ctrl+shift+f,ctrl+shift+u快捷键冲突
+# 禁用unicode,chttrans(简繁切换)插件，以解决ctrl+shift+f,ctrl+shift+u快捷键冲突
 fcitx5 --disable=wayland,unicode,chttrans &
