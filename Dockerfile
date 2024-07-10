@@ -101,7 +101,7 @@ WORKDIR "${WORKSPACES}"
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 # ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib
 
-RUN mkdir -p /root/fcitx
-COPY fcitx/. /root/fcitx/
+RUN mkdir -p ~/.config/fcitx5/
+COPY fcitx/. ~/.config/fcitx5/
 #RUN wget https://addons.mozilla.org/firefox/downloads/file/4166471/#chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
 #RUN /usr/bin/firefox -silent -install-global-extension ./chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi

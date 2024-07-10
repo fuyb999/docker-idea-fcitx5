@@ -17,14 +17,13 @@ docker-idea:v24.04.1-alpine-glibc
 ```
 
 ## install fcitx5-configtool
-```
-#echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-#echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-echo "https://mirrors.aliyun.com/alpine/edge/main/" >> /etc/apk/repositories
-echo "https://mirrors.aliyun.com/alpine/edge/community/" >> /etc/apk/repositories
-echo "https://mirrors.aliyun.com/alpine/edge/testing/" >> /etc/apk/repositories
+```shell
+echo "https://mirrors.ustc.edu.cn/alpine/edge/main/" >> /etc/apk/repositories
+echo "https://mirrors.ustc.edu.cn/alpine/edge/community/" >> /etc/apk/repositories
+echo "https://mirrors.ustc.edu.cn/alpine/edge/testing/" >> /etc/apk/repositories
 apk update
 apk add --no-cache \
+    boost-iostreams \
     fcitx5 \
     fcitx5-chinese-addons \
     fcitx5-configtool \
