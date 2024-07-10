@@ -1,21 +1,20 @@
-FROM jlesage/firefox:v24.04.1
+FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.3
 
 ENV LANG=zh_CN.UTF-8
 ENV TZ=Asia/Shanghai
 ENV USER_ID=0
 ENV GROUP_ID=0
 
-ENV XMODIFIERS=@im=fcitx5
-ENV GTK_IM_MODULE=fcitx5
-ENV QT_IM_MODULE=fcitx5
+ENV XMODIFIERS=@im=fcitx
+ENV GTK_IM_MODULE=fcitx
+ENV QT_IM_MODULE=fcitx
 
-ENV GLIBC_VERSION 2.35-r1
 # ENV JAVA_HOME=/usr
 ENV IDEA_VERSION="2024.1"
 # ENV IDEA_JDK=$JAVA_HOME
 ENV WORKSPACES="/root/IdeaProjects"
 
-RUN sed -i "s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g" /etc/apk/repositories
+RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
 
 # Install pkg
 RUN add-pkg \
@@ -36,23 +35,13 @@ RUN add-pkg \
     openssh \
     jq py3-configobj py3-pip py3-setuptools python3 python3-dev
 
-# Download and install glibc for idea jbr(openjdk) : idea editor fcitx5: https://github.com/jeanblanchard/docker-alpine-glibc/
-RUN curl -Lo /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
-  curl -Lo glibc.apk "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" && \
-  curl -Lo glibc-bin.apk "https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" && \
-  apk add --force-overwrite glibc-bin.apk glibc.apk && \
-  /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib && \
-  echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
-
 #RUN add-pkg openjdk17-jdk
 #RUN wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.gz -O jdk-17.0.10_linux-x64_bin.tar.gz
 #RUN tar -xzf ./jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local/
 
 # Install fcitx and fcitx-pinyin
 RUN add-pkg \
-    boost1.84-iostreams --repository=https://mirrors.ustc.edu.cn/alpine/edge/main
-RUN add-pkg \
-    fcitx5 fcitx5-chinese-addons --repository=https://mirrors.ustc.edu.cn/alpine/edge/testing
+    fcitx5 fcitx5-chinese-addons
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
@@ -101,7 +90,7 @@ WORKDIR "${WORKSPACES}"
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 # ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib
 
-RUN mkdir -p /root/fcitx
-COPY fcitx/. /root/fcitx/
+RUN mkdir -p ~/.config/fcitx5
+COPY fcitx/. ~/.config/fcitx5
 #RUN wget https://addons.mozilla.org/firefox/downloads/file/4166471/#chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
 #RUN /usr/bin/firefox -silent -install-global-extension ./chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
