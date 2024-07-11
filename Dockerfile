@@ -37,16 +37,13 @@ RUN add-pkg \
     ca-certificates \
     openssh-server \
     jq \
-    java-common \
     language-pack-zh-hans fonts-wqy-zenhei \
-    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
-
-# Install fcitx and fcitx-pinyin
-# fcitx5 fcitx5-chinese-addons
-RUN \
+    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 && \
+    # Install fcitx and fcitx-pinyin
+    # fcitx5 fcitx5-chinese-addons
     add-pkg fcitx5-* && \
-    apt-get purge -y dbus fcitx5-module-emoji fcitx5-frontend-* fcitx5-config-qt fcitx5-module-cloudpinyin* fcitx5-keyman fcitx5-sayura fcitx5-anthy fcitx5-chewing fcitx5-hangul fcitx5-kkc fcitx5-m17n fcitx5-mozc fcitx5-rime fcitx5-skk fcitx5-unikey fcitx5-module-lua-* fcitx5-module-pinyinhelper-dev fcitx5-module-punctuation-dev fcitx5-modules-dev && \
-    apt-get autoremove -y
+        apt-get purge -y dbus fcitx5-module-emoji fcitx5-frontend-* fcitx5-config-qt fcitx5-module-cloudpinyin* fcitx5-keyman fcitx5-sayura fcitx5-anthy fcitx5-chewing fcitx5-hangul fcitx5-kkc fcitx5-m17n fcitx5-mozc fcitx5-rime fcitx5-skk fcitx5-unikey fcitx5-module-lua-* fcitx5-module-pinyinhelper-dev fcitx5-module-punctuation-dev fcitx5-modules-dev && \
+        apt-get autoremove -y
 
 # Install ja-netfilter
 ADD ja-netfilter-all.zip .
