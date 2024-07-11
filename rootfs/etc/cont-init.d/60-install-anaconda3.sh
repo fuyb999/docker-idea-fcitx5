@@ -7,12 +7,9 @@ log() {
     echo "[cont-init.d] $(basename $0): $*"
 }
 
-#apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
-
 export ANACONDA_HOME=$XDG_CONFIG_HOME/anaconda3
 
-which which conda > /dev/null 2>&1
-if [ "$?" -eq "0" ]; then
+if [ ${ENABLE_CONDA} -eq 0 ] || [ "$(which conda)" ]; then
   exit 0
 fi
 
@@ -36,13 +33,15 @@ EOF
 chmod 777 $XDG_CONFIG_HOME/.condarc
 
 if [ ! -f "${PKG_PATH}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh" ]; then
+  #apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
   wget -nc https://repo.anaconda.com/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -O ${PKG_PATH}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh
 fi
 
 bash ${PKG_PATH}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p $ANACONDA_HOME -f
 
 chmod -R 777 $ANACONDA_HOME && $ANACONDA_HOME/bin/conda init bash
-source /config/.bashrc
+#source /config/.bashrc
+source /root/.bashrc
 
 #conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 #conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/

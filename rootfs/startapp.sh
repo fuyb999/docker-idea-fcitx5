@@ -11,6 +11,8 @@ log() {
     echo "[ideasupervisor] $*"
 }
 
+export IDEA_PATH=${XDG_CONFIG_HOME}/idea
+
 getpid_idea() {
     PID=UNSET
     if [ -f /config/idea.pid ]; then
@@ -33,7 +35,7 @@ is_idea_running() {
 
 start_idea() {
 #    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib /usr/local/idea/bin/idea.sh > /config/log/idea/output.log 2>&1 &
-    /usr/local/idea/bin/idea.sh > /config/log/idea/output.log 2>&1 &
+    ${IDEA_PATH}/bin/idea.sh > /config/log/idea/output.log 2>&1 &
 }
 
 kill_idea() {

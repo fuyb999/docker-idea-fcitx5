@@ -14,7 +14,7 @@ mkdir -p /config/log/idea
 chown -R $USER_ID:$GROUP_ID /config/*
 
 if [ -d "/config/xdg/cache/JetBrains" ]; then
-  chmod +x -R /config/xdg/cache/JetBrains
+  chmod +x -R $XDG_CACHE_HOME/JetBrains
 fi
 
 # Maximize only the main/initial window.

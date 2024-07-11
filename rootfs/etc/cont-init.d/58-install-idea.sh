@@ -13,12 +13,13 @@ if [ -d "${IDEA_PATH}" ]; then
   exit 0
 fi
 
-mkdir -p $IDEA_PATH
 # IDEA_BIN_ROOT_NAME="$(tar -tf /ideaIU-${IDEA_VERSION}.tar.gz | awk -F "/" '{print $1}' | sed -n '1p')"
 if [ ! -f "${PKG_PATH}/ideaIU-${IDEA_VERSION}.tar.gz" ]; then
   wget https://download.jetbrains.com/idea/ideaIU-${IDEA_VERSION}.tar.gz -O ${PKG_PATH}/ideaIU-${IDEA_VERSION}.tar.gz
 fi
-tar -xzf ${PKG_PATH}/ideaIU-${IDEA_VERSION}.tar.gz --strip-components=1 -C $IDEA_PATH && \
+
+mkdir -p $IDEA_PATH && \
+  tar -xzf ${PKG_PATH}/ideaIU-${IDEA_VERSION}.tar.gz --strip-components=1 -C $IDEA_PATH && \
   echo "-javaagent:/usr/local/ja-netfilter-all/ja-netfilter.jar=jetbrains" >> $IDEA_PATH/bin/idea64.vmoptions && \
   echo "--add-opens=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED" >> $IDEA_PATH/bin/idea64.vmoptions && \
   echo "--add-opens=java.base/jdk.internal.org.objectweb.asm.tree=ALL-UNNAMED" >> $IDEA_PATH/bin/idea64.vmoptions

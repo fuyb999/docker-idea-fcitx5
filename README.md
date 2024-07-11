@@ -9,10 +9,11 @@ sudo docker run -d --name=idea \
 -e JDK_VERSION=17.0.10 \
 -e IDEA_VERSION=2024.1 \
 -e CONDA_VERSION=2024.06-1 \
+-e NODE_VERSION=16.19.1 \
 -e WEB_LISTENING_PORT=5800 \
 -e VNC_LISTENING_PORT=5900 \
 -v $HOME/workspaces/config:/config:rw \
--v $(pwd)/packages:/config/packages:ro \
+-v $(pwd)/packages:/config/packages \
 -p 5800:5800 \
 -p 5900:5900 \
 docker-idea:ubuntu-22.04-v4.6.3
@@ -27,7 +28,8 @@ sudo docker run -d --name=idea1 \
 -e JDK_VERSION=17.0.10 \
 -e IDEA_VERSION=2024.1 \
 -e CONDA_VERSION=2024.06-1 \
+-e NODE_VERSION=16.19.1 \
 -v $HOME/workspaces/config1:/config:rw \
--v $(pwd)/packages:/config/packages:ro \
+-v $(pwd)/packages:/config/packages \
 -p 5901:5900 \
 docker-idea:ubuntu-22.04-v4.6.3

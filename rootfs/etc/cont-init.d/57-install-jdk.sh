@@ -7,16 +7,13 @@ log() {
     echo "[cont-init.d] $(basename $0): $*"
 }
 
-export PKG_PATH=/config/packages
-
 if [ ! -d "$PKG_PATH" ]; then
   mkdir -p ${PKG_PATH}
 fi
 
-export JAVA_HOME=$XDG_CONFIG_HOME/jdk-${JDK_VERSION}
-export PATH=$JAVA_HOME/bin:$PATH
+#export JAVA_HOME=$XDG_CONFIG_HOME/jdk-${JDK_VERSION}
 
-if [ -d "${JAVA_HOME}" ]; then
+if [ ${ENABLE_JDK} -eq 0 ] || [ -d "${JAVA_HOME}" ]; then
   exit 0
 fi
 

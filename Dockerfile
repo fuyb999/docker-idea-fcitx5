@@ -11,11 +11,8 @@ ENV XMODIFIERS=@im=fcitx5
 ENV GTK_IM_MODULE=fcitx5
 ENV QT_IM_MODULE=fcitx5
 
-ENV JDK_VERSION="17.0.10"
 ENV IDEA_VERSION="2024.1"
-ENV CONDA_VERSION="2024.06-1"
 ENV WORKSPACES="/root/IdeaProjects"
-ENV JAVA_HOME=/config/xdg/config/java-$JDK_VERSION
 
 RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
 
@@ -49,11 +46,6 @@ RUN add-pkg \
 ADD ja-netfilter-all.zip .
 RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all
 
-# Install nodejs
-RUN wget -nc https://registry.npmmirror.com/-/binary/node/latest-v16.x/node-v16.19.1-linux-x64.tar.gz -O /tmp/node-v16.19.1-linux-x64.tar.gz && \
-    tar -C /usr/local --strip-components 1 -xzf /tmp/node-v16.19.1-linux-x64.tar.gz && \
-    rm -rf /tmp/node-*
-
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
   && sed -i 's#touch /var/run/openbox/openbox.ready#sh -c /etc/services.d/openbox/startup.sh#' /etc/services.d/openbox/params
@@ -70,6 +62,7 @@ RUN \
 
 # Add files.
 COPY rootfs/. /
+RUN chmod +x /etc/cont-init.d/*.sh
 
 # Set environment variables.
 ENV APP_NAME="IntelliJ IDEA ${IDEA_VERSION}" \
@@ -88,5 +81,17 @@ LABEL \
       org.label-schema.description="Docker container for IntelliJ IDEA" \
       org.label-schema.version="v2.0.1" \
       org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
+
+ENV PKG_PATH=/config/packages
+ENV ENABLE_JDK=0
+ENV JDK_VERSION="17.0.10"
+ENV JAVA_HOME=/config/xdg/config/jdk-$JDK_VERSION
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+ENV ENABLE_CONDA=0
+ENV CONDA_VERSION="2024.06-1"
+
+ENV ENABLE_NODE=1
+ENV NODE_VERSION="16.19.1"
 
 WORKDIR "${WORKSPACES}"
