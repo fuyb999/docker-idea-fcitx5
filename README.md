@@ -29,6 +29,5 @@ sudo docker run -d --name=idea1 \
 -e CONDA_VERSION=2024.06-1 \
 -v $HOME/workspaces/config1:/config:rw \
 -v $(pwd)/packages:/config/packages:ro \
--p 5800:5800 \
--p 5900:5900 \
+-p 5901:5900 \
 docker-idea:ubuntu-22.04-v4.6.3

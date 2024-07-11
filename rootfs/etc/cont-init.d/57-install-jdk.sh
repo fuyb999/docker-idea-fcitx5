@@ -14,7 +14,7 @@ if [ ! -d "$PKG_PATH" ]; then
 fi
 
 export JAVA_HOME=$XDG_CONFIG_HOME/jdk-${JDK_VERSION}
-export PATH=$JAVA_HOME/bin;$PATH
+export PATH=$JAVA_HOME/bin:$PATH
 
 if [ -d "${JAVA_HOME}" ]; then
   exit 0
