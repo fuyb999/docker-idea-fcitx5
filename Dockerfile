@@ -11,15 +11,18 @@ ENV XMODIFIERS=@im=fcitx5
 ENV GTK_IM_MODULE=fcitx5
 ENV QT_IM_MODULE=fcitx5
 
-# ENV JAVA_HOME=/usr
+ENV JDK_VERSION="17.0.10"
 ENV IDEA_VERSION="2024.1"
-# ENV IDEA_JDK=$JAVA_HOME
+ENV CONDA_VERSION="2024.06-1"
 ENV WORKSPACES="/root/IdeaProjects"
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV JAVA_HOME=/config/xdg/config/java-$JDK_VERSION
 
 RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
 
 # Install pkg
+# python3 python3-dev python3-pip \
+# openjdk-17-jdk \
+
 RUN add-pkg \
     bash \
     curl \
@@ -31,15 +34,28 @@ RUN add-pkg \
     git \
     unzip \
     zip \
-    openjdk-17-jdk \
+    ca-certificates \
     openssh-server \
     jq \
-    python3 python3-dev python3-pip \
-    language-pack-zh-hans fonts-wqy-zenhei
+    java-common \
+    language-pack-zh-hans fonts-wqy-zenhei \
+    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
 
-#RUN add-pkg openjdk17-jdk
-#RUN wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.gz -O jdk-17.0.10_linux-x64_bin.tar.gz
-#RUN tar -xzf ./jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local/
+# Install fcitx and fcitx-pinyin
+# fcitx5 fcitx5-chinese-addons
+RUN \
+    add-pkg fcitx5-* && \
+    apt-get purge -y dbus fcitx5-module-emoji fcitx5-frontend-* fcitx5-config-qt fcitx5-module-cloudpinyin* fcitx5-keyman fcitx5-sayura fcitx5-anthy fcitx5-chewing fcitx5-hangul fcitx5-kkc fcitx5-m17n fcitx5-mozc fcitx5-rime fcitx5-skk fcitx5-unikey fcitx5-module-lua-* fcitx5-module-pinyinhelper-dev fcitx5-module-punctuation-dev fcitx5-modules-dev && \
+    apt-get autoremove -y
+
+# Install ja-netfilter
+ADD ja-netfilter-all.zip .
+RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all
+
+# Install nodejs
+RUN wget -nc https://registry.npmmirror.com/-/binary/node/latest-v16.x/node-v16.19.1-linux-x64.tar.gz -O /tmp/node-v16.19.1-linux-x64.tar.gz && \
+    tar -C /usr/local --strip-components 1 -xzf /tmp/node-v16.19.1-linux-x64.tar.gz && \
+    rm -rf /tmp/node-*
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
@@ -48,10 +64,6 @@ RUN chmod +x /etc/services.d/openbox/startup.sh \
 # alt+tab change bettwen idea and firefox
 # Apline: RUN sed-patch 's/Navigator/unknown/g' /etc/openbox/main-window-selection.xml
 ADD ./openbox /etc/openbox
-
-# Install ja-netfilter
-ADD ja-netfilter-all.zip .
-RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all
 
 # Generate and install favicons.
 COPY idea.png .
@@ -77,19 +89,7 @@ RUN \
 LABEL \
       org.label-schema.name="idea" \
       org.label-schema.description="Docker container for IntelliJ IDEA" \
-      org.label-schema.version="unknown" \
-      org.label-schema.vcs-url="https://github.com/romancin/idea-docker"
+      org.label-schema.version="v2.0.1" \
+      org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
 
 WORKDIR "${WORKSPACES}"
-
-#RUN wget https://addons.mozilla.org/firefox/downloads/file/4166471/#chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
-#RUN /usr/bin/firefox -silent -install-global-extension ./chinese_simplified_zh_cn_la-117.0.20230912.13654.xpi
-
-# Install fcitx and fcitx-pinyin
-#RUN add-pkg \
-#    fcitx5 fcitx5-chinese-addons
-# kde-config-fcitx5
-RUN add-pkg fcitx5-* && \
-    apt-get purge -y fcitx5-config-qt fcitx5-module-cloudpinyin* fcitx5-keyman fcitx5-sayura fcitx5-anthy fcitx5-chewing fcitx5-hangul fcitx5-kkc fcitx5-m17n fcitx5-mozc fcitx5-rime fcitx5-skk fcitx5-unikey fcitx5-module-lua-* fcitx5-module-pinyinhelper-dev fcitx5-module-punctuation-dev fcitx5-modules-dev && \
-    apt-get autoremove -y
-#COPY fcitx5/. /config/xdg/config/fcitx5/
