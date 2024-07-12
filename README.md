@@ -24,12 +24,19 @@ docker-idea:ubuntu-22.04-v4.6.3
 fcitx5-diagnose
 ```
 
+## backup config
+```shell
+tar --exclude=config/log --exclude=config/xdg/softwares --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
+# include idea plugins
+tar --exclude=config/log --exclude=config/xdg/softwares --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/python.zip -jcvf config-idea2014.1-plugins.tar.bz2 /config/
+```
+
 sudo docker run -d --name=idea1 \
 -e JDK_VERSION=17.0.10 \
 -e IDEA_VERSION=2024.1 \
 -e CONDA_VERSION=2024.06-1 \
 -e NODE_VERSION=16.19.1 \
--v $HOME/workspaces/config1:/config:rw \
+-v /work/home/fuyb/workspaces/config1:/config:rw \
 -v $(pwd)/packages:/config/packages \
 -p 5901:5900 \
 docker-idea:ubuntu-22.04-v4.6.3

@@ -13,7 +13,13 @@ fi
 
 export JDK_HOME=${XDG_SOFTWARE_HOME}/jdk-${JDK_VERSION}
 
-if [ ${ENABLE_JDK} -eq 0 ] || [ -d "${JAVA_HOME}" ]; then
+install(){
+  rm -rf $JAVA_HOME
+  ln -s $JDK_HOME $JAVA_HOME
+}
+
+if [ ${ENABLE_JDK} -eq 0 ] || [ -n "$(which java)" ]; then
+  install
   exit 0
 fi
 
@@ -24,5 +30,4 @@ fi
 mkdir -p $JDK_HOME
 tar --strip-components=1 -xzf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JDK_HOME
 
-rm -rf $JAVA_HOME
-ln -s $JDK_HOME $JAVA_HOME
+install

@@ -8,10 +8,16 @@ log() {
 }
 
 if [ ${ENABLE_NODE} -eq 0 ] || [ -n "$(which node)" ]; then
+  install
   exit 0
 fi
 
 export NODE_PATH=${XDG_SOFTWARE_HOME}/node-v${NODE_VERSION}
+
+install(){
+  rm -rf /usr/local/bin/node
+  ln -s $NODE_PATH/bin/node /usr/local/bin/node
+}
 
 if [ ! -f "${PKG_HOME}/node-v${NODE_VERSION}-linux-x64.tar.gz" ]; then
   # ${NODE_VERSION%%.*} -> 16.19.1 -> 16
@@ -21,5 +27,4 @@ fi
 mkdir -p $NODE_PATH
 tar -C $NODE_PATH --strip-components 1 -xzf ${PKG_HOME}/node-v${NODE_VERSION}-linux-x64.tar.gz
 
-rm -rf /usr/local/bin/node
-ln -s $NODE_PATH/bin/node /usr/local/bin/node
+install
