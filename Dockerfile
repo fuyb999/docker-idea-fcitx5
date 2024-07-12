@@ -10,8 +10,6 @@ ENV GROUP_ID=0
 ENV XMODIFIERS=@im=fcitx5
 ENV GTK_IM_MODULE=fcitx5
 ENV QT_IM_MODULE=fcitx5
-
-ENV IDEA_VERSION="2024.1"
 ENV WORKSPACES="/root/IdeaProjects"
 
 RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
@@ -65,8 +63,22 @@ COPY rootfs/. /
 RUN chmod +x /etc/cont-init.d/*.sh
 
 # Set environment variables.
+ENV IDEA_VERSION="2024.1"
 ENV APP_NAME="IntelliJ IDEA ${IDEA_VERSION}" \
     S6_KILL_GRACETIME=8000
+
+ENV XDG_SOFTWARE_HOME=/config/xdg/softwares
+ENV PKG_HOME=/config/packages
+ENV ENABLE_JDK=1
+ENV JDK_VERSION="17.0.10"
+ENV JAVA_HOME=/usr/local/jdk-$JDK_VERSION
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+ENV ENABLE_CONDA=1
+ENV CONDA_VERSION="2024.06-1"
+
+ENV ENABLE_NODE=1
+ENV NODE_VERSION="16.19.1"
 
 # Set internal environment variables.
 RUN \
@@ -81,18 +93,5 @@ LABEL \
       org.label-schema.description="Docker container for IntelliJ IDEA" \
       org.label-schema.version="v2.0.1" \
       org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
-
-ENV XDG_SOFTWARE_HOME=/config/xdg/softwares
-ENV PKG_HOME=/config/packages
-ENV ENABLE_JDK=1
-ENV JDK_VERSION="17.0.10"
-ENV JAVA_HOME=/usr/local/jdk-$JDK_VERSION
-ENV PATH=$JAVA_HOME/bin:$PATH
-
-ENV ENABLE_CONDA=1
-ENV CONDA_VERSION="2024.06-1"
-
-ENV ENABLE_NODE=1
-ENV NODE_VERSION="16.19.1"
 
 WORKDIR "${WORKSPACES}"
