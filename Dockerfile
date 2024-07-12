@@ -82,13 +82,14 @@ LABEL \
       org.label-schema.version="v2.0.1" \
       org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
 
-ENV PKG_PATH=/config/packages
-ENV ENABLE_JDK=0
+ENV XDG_SOFTWARE_HOME=/config/xdg/softwares
+ENV PKG_HOME=/config/packages
+ENV ENABLE_JDK=1
 ENV JDK_VERSION="17.0.10"
-ENV JAVA_HOME=/config/xdg/config/jdk-$JDK_VERSION
+ENV JAVA_HOME=/usr/local/jdk-$JDK_VERSION
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-ENV ENABLE_CONDA=0
+ENV ENABLE_CONDA=1
 ENV CONDA_VERSION="2024.06-1"
 
 ENV ENABLE_NODE=1

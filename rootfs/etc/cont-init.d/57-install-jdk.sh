@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
@@ -7,18 +7,22 @@ log() {
     echo "[cont-init.d] $(basename $0): $*"
 }
 
-if [ ! -d "$PKG_PATH" ]; then
-  mkdir -p ${PKG_PATH}
+if [ ! -d "$PKG_HOME" ]; then
+  mkdir -p ${PKG_HOME}
 fi
 
-#export JAVA_HOME=$XDG_CONFIG_HOME/jdk-${JDK_VERSION}
+export JDK_HOME=${XDG_SOFTWARE_HOME}/jdk-${JDK_VERSION}
 
 if [ ${ENABLE_JDK} -eq 0 ] || [ -d "${JAVA_HOME}" ]; then
   exit 0
 fi
 
-if [ ! -f "${PKG_PATH}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" ]; then
-  wget https://download.oracle.com/java/17/archive/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -O ${PKG_PATH}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz
+if [ ! -f "${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" ]; then
+  wget https://download.oracle.com/java/17/archive/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -O ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz
 fi
 
-tar -xzf ${PKG_PATH}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $XDG_CONFIG_HOME
+mkdir -p $JDK_HOME
+tar --strip-components=1 -xzf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JDK_HOME
+
+rm -rf $JAVA_HOME
+ln -s $JDK_HOME $JAVA_HOME
