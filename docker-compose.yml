@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3.8"
 
 services:
   idea-docker-1:
@@ -27,6 +27,7 @@ services:
     ports:
       - "5901:5900"
     environment:
+      - NVIDIA_VISIBLE_DEVICES=all
       - JDK_VERSION=17.0.10
       - IDEA_VERSION=2024.1
       - NODE_VERSION=16.19.1
@@ -34,6 +35,13 @@ services:
       - ENABLE_JDK=1
       - ENABLE_NODE=1
       - ENABLE_CONDA=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: "nvidia"
+              count: "all"
+              capabilities: [ "gpu" ]
     volumes:
       - ${WORKSPACE}/config1:/config:rw
       - ${WORKSPACE}/projects:/root/IdeaProjects:z
