@@ -1,0 +1,40 @@
+version: "3.0"
+
+services:
+  idea-docker-1:
+    image: docker-idea:ubuntu-22.04-v4.6.3
+    build: .
+    container_name: idea
+    ports:
+      - "5900:5900"
+    environment:
+      - JDK_VERSION=17.0.10
+      - IDEA_VERSION=2024.1
+      - NODE_VERSION=16.19.1
+      - CONDA_VERSION=2024.06-1
+      - ENABLE_JDK=1
+      - ENABLE_NODE=1
+      - ENABLE_CONDA=0
+    volumes:
+      - ${WORKSPACE}/config:/config:rw
+      - ${WORKSPACE}/projects:/root/IdeaProjects:z
+      - ./packages:/config/packages
+
+  idea-docker-2:
+    image: docker-idea:ubuntu-22.04-v4.6.3
+    build: .
+    container_name: idea1
+    ports:
+      - "5901:5900"
+    environment:
+      - JDK_VERSION=17.0.10
+      - IDEA_VERSION=2024.1
+      - NODE_VERSION=16.19.1
+      - CONDA_VERSION=2024.06-1
+      - ENABLE_JDK=1
+      - ENABLE_NODE=1
+      - ENABLE_CONDA=1
+    volumes:
+      - ${WORKSPACE}/config1:/config:rw
+      - ${WORKSPACE}/projects:/root/IdeaProjects:z
+      - ./packages:/config/packages
