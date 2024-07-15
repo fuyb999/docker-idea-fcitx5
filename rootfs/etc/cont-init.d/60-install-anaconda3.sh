@@ -17,7 +17,7 @@ if [ ${ENABLE_CONDA} -eq 0 ] || [ "$(which conda)" ]; then
   exit 0
 fi
 
-tee $XDG_CONFIG_HOME/.condarc << EOF
+tee /config/.condarc << EOF
 envs_dirs:
   - ${XDG_CONFIG_HOME}/Anaconda3/envs
   - ${XDG_CONFIG_HOME}/.conda/envs
@@ -34,7 +34,7 @@ channels:
   - defaults
 EOF
 
-chmod 777 $XDG_CONFIG_HOME/.condarc
+chmod 777 /config/.condarc
 
 if [ ! -f "${PKG_HOME}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh" ]; then
   #apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6

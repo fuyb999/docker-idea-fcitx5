@@ -1,33 +1,43 @@
 version: "3.8"
 
 services:
-  idea-docker-1:
+  setup:
+    image: docker-idea:ubuntu-22.04-v4.6.3
+    volumes:
+      - ${WORKSPACE}/config:/config:rw
+      - ${CONFIG_BACKUP_FILE}:/config.tar.bz2
+    user: "0"
+    command: >
+      bash -c '
+        if [ x${WORKSPACE} == x ]; then
+          echo "Set the WORKSPACE environment variable in the .env file";
+          exit 1;
+        fi;
+        if [ ! -d /config/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
+          echo "Restore idea config";
+          sleep 1;
+          tar -jxvf /config.tar.bz2 -C /config --strip-components=1;
+        fi;
+        #until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
+        echo "All done!";
+      '
+    healthcheck:
+      test: [ "CMD-SHELL", "[ -d /config/xdg/config/JetBrains ]" ]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  idea-docker:
+    depends_on:
+      setup:
+        condition: service_healthy
     image: docker-idea:ubuntu-22.04-v4.6.3
     build: .
-    container_name: idea
+    container_name: idea-docker
     ports:
       - "5900:5900"
     environment:
-      - JDK_VERSION=17.0.10
-      - IDEA_VERSION=2024.1
-      - NODE_VERSION=16.19.1
-      - CONDA_VERSION=2024.06-1
-      - ENABLE_JDK=1
-      - ENABLE_NODE=1
-      - ENABLE_CONDA=0
-    volumes:
-      - ${WORKSPACE}/config:/config:rw
-      - ${WORKSPACE}/projects:/root/IdeaProjects:z
-      - ./packages:/config/packages
-
-  idea-docker-2:
-    image: docker-idea:ubuntu-22.04-v4.6.3
-    build: .
-    container_name: idea1
-    ports:
-      - "5901:5900"
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
       - JDK_VERSION=17.0.10
       - IDEA_VERSION=2024.1
       - NODE_VERSION=16.19.1
@@ -43,6 +53,7 @@ services:
               count: "all"
               capabilities: [ "gpu" ]
     volumes:
-      - ${WORKSPACE}/config1:/config:rw
+      - ${WORKSPACE}/config:/config:rw
       - ${WORKSPACE}/projects:/root/IdeaProjects:z
+      - /opt/container-apps:/opt/apps:z
       - ./packages:/config/packages
