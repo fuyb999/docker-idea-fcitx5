@@ -45,15 +45,15 @@ services:
       - ENABLE_JDK=1
       - ENABLE_NODE=1
       - ENABLE_CONDA=1
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: "nvidia"
-              count: "all"
-              capabilities: [ "gpu" ]
+        #  deploy:
+        # resources:
+        #reservations:
+        # devices:
+        #   - driver: "nvidia"
+        #     count: "all"
+        #     capabilities: [ "gpu" ]
     volumes:
       - ${WORKSPACE}/config:/config:rw
       - ${WORKSPACE}/projects:/root/IdeaProjects:z
-      - /opt/container-apps:/opt/apps:z
+      - /work/container-apps:/opt/apps:z
       - ./packages:/config/packages

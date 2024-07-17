@@ -3,20 +3,7 @@
 The docker image provided is based on `jlesage/firefox` image. In addition, `fcitx` is installed and allows you to switch input language from `en` to `pinyin` using the `ctrl + space` keyboard shortcut.
 
 ```shell
-sudo docker build -t docker-idea:ubuntu-22.04-v4.6.3 .
-
-sudo docker run -d --name=idea \
--e JDK_VERSION=17.0.10 \
--e IDEA_VERSION=2024.1 \
--e CONDA_VERSION=2024.06-1 \
--e NODE_VERSION=16.19.1 \
--e WEB_LISTENING_PORT=5800 \
--e VNC_LISTENING_PORT=5900 \
--v $HOME/workspaces/config:/config:rw \
--v $(pwd)/packages:/config/packages \
--p 5800:5800 \
--p 5900:5900 \
-docker-idea:ubuntu-22.04-v4.6.3
+sudo docker-compose up
 ```
 
 ## fcitx5 details
@@ -26,17 +13,7 @@ fcitx5-diagnose
 
 ## backup config
 ```shell
-tar --exclude=config/log --exclude=config/xdg/softwares --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
+tar --exclude=config/log --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
 # include idea plugins
-tar --exclude=config/log --exclude=config/xdg/softwares --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/python.zip -jcvf config-idea2014.1-plugins.tar.bz2 /config/
+tar --exclude=config/log --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/python.zip -jcvf config-idea2014.1-plugins.tar.bz2 /config/
 ```
-
-sudo docker run -d --name=idea1 \
--e JDK_VERSION=17.0.10 \
--e IDEA_VERSION=2024.1 \
--e CONDA_VERSION=2024.06-1 \
--e NODE_VERSION=16.19.1 \
--v /work/home/fuyb/workspaces/config1:/config:rw \
--v $(pwd)/packages:/config/packages \
--p 5901:5900 \
-docker-idea:ubuntu-22.04-v4.6.3
