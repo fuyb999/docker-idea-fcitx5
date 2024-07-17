@@ -9,10 +9,6 @@ log() {
 
 export ANACONDA_HOME=${XDG_SOFTWARE_HOME}/anaconda3-${CONDA_VERSION}
 
-if [ -f "/config/.bashrc" ]; then
-  source /config/.bashrc
-fi
-
 if [ ${ENABLE_CONDA} -eq 0 ] || [ "$(which conda)" ]; then
   exit 0
 fi
@@ -43,26 +39,26 @@ fi
 
 bash ${PKG_HOME}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p $ANACONDA_HOME -f
 
-# chmod -R 777 $ANACONDA_HOME && $ANACONDA_HOME/bin/conda init bash
+chmod -R 777 $ANACONDA_HOME && $ANACONDA_HOME/bin/conda init bash
 # 调用conda init base创建.bashrc失败 手动创建.bashrc
-tee /config/.bashrc << EOF
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('${ANACONDA_HOME}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "\$__conda_setup"
-else
-    if [ -f "${ANACONDA_HOME}/etc/profile.d/conda.sh" ]; then
-        . "${ANACONDA_HOME}/etc/profile.d/conda.sh"
-    else
-        export PATH="$JAVA_HOME/bin:${ANACONDA_HOME}/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-EOF
+#tee /config/.bashrc << EOF
+## >>> conda initialize >>>
+## !! Contents within this block are managed by 'conda init' !!
+#__conda_setup="$('${ANACONDA_HOME}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "\$__conda_setup"
+#else
+#    if [ -f "${ANACONDA_HOME}/etc/profile.d/conda.sh" ]; then
+#        . "${ANACONDA_HOME}/etc/profile.d/conda.sh"
+#    else
+#        export PATH="${ANACONDA_HOME}/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
+## <<< conda initialize <<<
+#EOF
 
-source /config/.bashrc
+#. /root/.bashrc
 
 #conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 #conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
