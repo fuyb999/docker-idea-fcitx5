@@ -13,6 +13,10 @@ services:
           echo "Set the WORKSPACE environment variable in the .env file";
           exit 1;
         fi;
+        if [ x${APPS_INSTALL_PATH} == x ]; then
+          echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
+          exit 1;
+        fi;
         if [ ! -d /config/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
           echo "Restore idea config";
           sleep 1;
@@ -55,5 +59,5 @@ services:
     volumes:
       - ${WORKSPACE}/config:/config:rw
       - ${WORKSPACE}/projects:/root/IdeaProjects:z
-      - /work/container-apps:/opt/apps:z
+      - ${APPS_INSTALL_PATH}:/opt/apps:z
       - ./packages:/config/packages
