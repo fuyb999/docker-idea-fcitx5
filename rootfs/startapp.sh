@@ -33,7 +33,7 @@ is_idea_running() {
 
 start_idea() {
 #    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib /usr/local/idea/bin/idea.sh > /config/log/idea/output.log 2>&1 &
-    /usr/local/ideaIU-${IDEA_VERSION}/bin/idea.sh > /config/log/idea/output.log 2>&1 &
+    ${XDG_SOFTWARE_HOME}/ideaIU-${IDEA_VERSION}/bin/idea.sh > /config/log/idea/output.log 2>&1 &
 }
 
 kill_idea() {

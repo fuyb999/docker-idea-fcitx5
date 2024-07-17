@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
@@ -11,11 +11,13 @@ export NODE_PATH=${XDG_SOFTWARE_HOME}/node-v${NODE_VERSION}
 
 install(){
   rm -rf /usr/local/bin/node
-  ln -s $NODE_PATH/bin/node /usr/local/bin/node
+  if [ -f "$NODE_PATH/bin/node" ]; then
+    ln -s $NODE_PATH/bin/node /usr/local/bin/node
+  fi
 }
 
+install
 if [ ${ENABLE_NODE} -eq 0 ] || [ -n "$(which node)" ]; then
-  install
   exit 0
 fi
 

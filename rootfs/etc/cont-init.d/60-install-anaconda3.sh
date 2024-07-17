@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
@@ -9,7 +9,14 @@ log() {
 
 export ANACONDA_HOME=${XDG_SOFTWARE_HOME}/anaconda3-${CONDA_VERSION}
 
-if [ ${ENABLE_CONDA} -eq 0 ] || [ "$(which conda)" ]; then
+init(){
+  chmod -R +x $ANACONDA_HOME && $ANACONDA_HOME/bin/conda init bash
+}
+
+if [ ${ENABLE_CONDA} -eq 0 ] || [ -f "/config/.condarc" ]; then
+  if [ -z "$(which conda)" ]; then
+    init
+  fi
   exit 0
 fi
 
@@ -39,7 +46,7 @@ fi
 
 bash ${PKG_HOME}/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p $ANACONDA_HOME -f
 
-chmod -R 777 $ANACONDA_HOME && $ANACONDA_HOME/bin/conda init bash
+init
 # 调用conda init base创建.bashrc失败 手动创建.bashrc
 #tee /config/.bashrc << EOF
 ## >>> conda initialize >>>
