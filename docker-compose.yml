@@ -5,7 +5,7 @@ services:
     image: docker-idea:ubuntu-22.04-v4.6.3
     volumes:
       - ${WORKSPACE}/config:/config:rw
-      - ${CONFIG_BACKUP_FILE:-/config.tar.bz2}:/config.tar.bz2
+      - ${CONFIG_BACKUP_PATH:-/backup}:/backup
 #    environment:
 #      - USER_ID=$(id -u)
 #      - GROUP_ID=$(id -g)
@@ -19,16 +19,24 @@ services:
           echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
           exit 1;
         fi;
-        if [ ! -d /config/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
+        if [ ! -d /config/xdg/config/JetBrains ]; then
           echo "Restore idea config";
           sleep 1;
-          tar --exclude=/config/.bashrc -jxvf /config.tar.bz2 -C /config --strip-components=1;
+          if [ -f /backup/config-idea2014.1-plugins.tar.bz2.0 ]; then
+            cat /backup/config-idea2014.1-plugins.tar.bz2.* > /backup/config-idea2014.1-plugins.tar.bz2;
+            tar --exclude=/config/.bashrc -jxvf /backup/config-idea2014.1-plugins.tar.bz2 -C /config --strip-components=1;
+            rm -rf /backup/config-idea2014.1-plugins.tar.bz2;
+          elif [ -f /backup/config.tar.bz2 ]; then
+            tar --exclude=/config/.bashrc -jxvf /backup/config.tar.bz2 -C /config --strip-components=1;
+          else
+            echo "The config file not found"
+          fi;
         fi;
         until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
         echo "All done!";
       '
     healthcheck:
-      test: [ "CMD-SHELL", "[ -d /config/xdg/config/JetBrains ]" ]
+      test: [ "CMD-SHELL", "[ -f /config/xdg/state/logrotate/logrotate.status ]" ]
 #      test: [ "CMD-SHELL", "[ -d /tmp ]" ]
       interval: 1s
       timeout: 5s

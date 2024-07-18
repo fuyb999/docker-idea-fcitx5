@@ -3,7 +3,7 @@
 set -u # Treat unset variables as an error.
 
 # 在Dockerfile中提前定义
-export HOME=/config
+#export HOME=/config
 
 trap "exit" TERM QUIT INT
 trap "kill_idea" EXIT

@@ -7,7 +7,7 @@ log() {
     echo "[cont-init.d] $(basename $0): $*"
 }
 
-HOME=/config
+#HOME=/config
 
 if [ ! -d "$PKG_HOME" ]; then
   mkdir -p ${PKG_HOME}
