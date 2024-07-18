@@ -22,10 +22,10 @@ services:
         if [ ! -d /config/xdg/config/JetBrains ]; then
           echo "Restore idea config";
           sleep 1;
-          if [ -f /backup/config-idea2014.1-plugins.tar.bz2.0 ]; then
-            cat /backup/config-idea2014.1-plugins.tar.bz2.* > /backup/config-idea2014.1-plugins.tar.bz2;
-            tar --exclude=/config/.bashrc -jxvf /backup/config-idea2014.1-plugins.tar.bz2 -C /config --strip-components=1;
-            rm -rf /backup/config-idea2014.1-plugins.tar.bz2;
+          if [ -f /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.0 ]; then
+            cat /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.* > /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
+            tar --exclude=/config/.bashrc -jxvf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2 -C /config --strip-components=1;
+            rm -rf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
           elif [ -f /backup/config.tar.bz2 ]; then
             tar --exclude=/config/.bashrc -jxvf /backup/config.tar.bz2 -C /config --strip-components=1;
           else
@@ -54,10 +54,10 @@ services:
     environment:
 #      - USER_ID=$(id -u)
 #      - GROUP_ID=$(id -g)
-      - JDK_VERSION=17.0.10
-      - IDEA_VERSION=2024.1
-      - NODE_VERSION=16.19.1
-      - CONDA_VERSION=2024.06-1
+      - JDK_VERSION=${JDK_VERSION}
+      - IDEA_VERSION=${IDEA_VERSION}
+      - NODE_VERSION=${NODE_VERSION}
+      - CONDA_VERSION=${CONDA_VERSION}
       - ENABLE_JDK=1
       - ENABLE_NODE=1
       - ENABLE_CONDA=1
