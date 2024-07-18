@@ -4,7 +4,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
 
 # 在Dockerfile中提前定义
-# export HOME=/config
+export HOME=/config
 
 PIDS=
 

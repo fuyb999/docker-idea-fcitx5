@@ -6,7 +6,9 @@ services:
     volumes:
       - ${WORKSPACE}/config:/config:rw
       - ${CONFIG_BACKUP_FILE:-/config.tar.bz2}:/config.tar.bz2
-    user: "0"
+#    environment:
+#      - USER_ID=$(id -u)
+#      - GROUP_ID=$(id -g)
     command: >
       bash -c '
         if [ x${WORKSPACE} == x ]; then
@@ -17,17 +19,17 @@ services:
           echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
           exit 1;
         fi;
-        if [ ! -d $HOME/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
+        if [ ! -d /config/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
           echo "Restore idea config";
           sleep 1;
-          tar --exclude=$HOME/.bashrc -jxvf /config.tar.bz2 -C $HOME --strip-components=1;
+          tar --exclude=/config/.bashrc -jxvf /config.tar.bz2 -C /config --strip-components=1;
         fi;
         until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
         echo "All done!";
       '
     healthcheck:
-      test: [ "CMD-SHELL", "[ -d $HOME/xdg/config/JetBrains ]" ]
-            # test: [ "CMD-SHELL", "[ -d /tmp ]" ]
+      test: [ "CMD-SHELL", "[ -d /config/xdg/config/JetBrains ]" ]
+#      test: [ "CMD-SHELL", "[ -d /tmp ]" ]
       interval: 1s
       timeout: 5s
       retries: 120
@@ -42,6 +44,8 @@ services:
     ports:
       - "5900:5900"
     environment:
+#      - USER_ID=$(id -u)
+#      - GROUP_ID=$(id -g)
       - JDK_VERSION=17.0.10
       - IDEA_VERSION=2024.1
       - NODE_VERSION=16.19.1
