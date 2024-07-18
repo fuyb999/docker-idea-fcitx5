@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
@@ -11,10 +11,18 @@ if [ ! -d "$PKG_HOME" ]; then
   mkdir -p ${PKG_HOME}
 fi
 
-export JDK_HOME=${XDG_SOFTWARE_HOME}/jdk-${JDK_VERSION}
-export PATH=%JDK_HOME%/bin:$PATH
+if [ ${ENABLE_JDK} -eq 0 ]; then
+ exit 0
+fi
 
-if [ ${ENABLE_JDK} -eq 0 ] || [ -n "$(which java)" ]; then
+# 在 ENV 中定义的PATH 在此不生效
+if [ ! -f $HOME/.bashrc ] || [ -z "$(cat $HOME/.bashrc | grep 'JAVA_HOME')" ]; then
+  echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $HOME/.bashrc
+fi
+
+# 注意$HOME=/config 而不是 /root
+source $HOME/.bashrc
+if [ -n "$(which java)" ]; then
   exit 0
 fi
 
@@ -22,5 +30,5 @@ if [ ! -f "${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" ]; then
   wget https://download.oracle.com/java/17/archive/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -O ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz
 fi
 
-mkdir -p $JDK_HOME
-tar --strip-components=1 -xzf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JDK_HOME
+mkdir -p $JAVA_HOME
+tar --strip-components=1 -xzf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JAVA_HOME

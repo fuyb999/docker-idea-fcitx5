@@ -8,15 +8,15 @@ log() {
 }
 
 # Make sure mandatory directories exist.
-if [ ! -d "/config/log/idea" ]; then
-  mkdir -p /config/log/idea
+if [ ! -d "$HOME/log/idea" ]; then
+  mkdir -p $HOME/log/idea
 fi
 
 # Take ownership of the config directory content.
 # /etc/cont-init.d/85-take-config-ownership.sh
 # chown -R $USER_ID:$GROUP_ID /config
 
-if [ -d "/config/xdg/cache/JetBrains" ]; then
+if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
   chmod +x -R $XDG_CACHE_HOME/JetBrains
 fi
 

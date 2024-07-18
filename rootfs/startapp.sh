@@ -2,7 +2,8 @@
 
 set -u # Treat unset variables as an error.
 
-export HOME=/config
+# 在Dockerfile中提前定义
+#export HOME=/config
 
 trap "exit" TERM QUIT INT
 trap "kill_idea" EXIT
@@ -13,8 +14,8 @@ log() {
 
 getpid_idea() {
     PID=UNSET
-    if [ -f /config/idea.pid ]; then
-        PID="$(cat /config/idea.pid)"
+    if [ -f $HOME/idea.pid ]; then
+        PID="$(cat $HOME/idea.pid)"
         # Make sure the saved PID is still running and is associated to
         # Thunder.
         if [ ! -f /proc/$PID/cmdline ] || ! cat /proc/$PID/cmdline | grep -qw "idea"; then
@@ -32,8 +33,8 @@ is_idea_running() {
 }
 
 start_idea() {
-#    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib /usr/local/idea/bin/idea.sh > /config/log/idea/output.log 2>&1 &
-    ${XDG_SOFTWARE_HOME}/ideaIU-${IDEA_VERSION}/bin/idea.sh > /config/log/idea/output.log 2>&1 &
+#    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib /usr/local/idea/bin/idea.sh > $HOME/log/idea/output.log 2>&1 &
+    ${XDG_SOFTWARE_HOME}/ideaIU-${IDEA_VERSION}/bin/idea.sh > $HOME/log/idea/output.log 2>&1 &
 }
 
 kill_idea() {

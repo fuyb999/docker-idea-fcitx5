@@ -5,7 +5,7 @@ services:
     image: docker-idea:ubuntu-22.04-v4.6.3
     volumes:
       - ${WORKSPACE}/config:/config:rw
-      - ${CONFIG_BACKUP_FILE:-/}:/config.tar.bz2
+      - ${CONFIG_BACKUP_FILE:-/config.tar.bz2}:/config.tar.bz2
     user: "0"
     command: >
       bash -c '
@@ -17,17 +17,16 @@ services:
           echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
           exit 1;
         fi;
-        if [ ! -d /config/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
+        if [ ! -d $HOME/xdg/config/JetBrains ] && [ -f /config.tar.bz2 ]; then
           echo "Restore idea config";
           sleep 1;
-          tar -jxvf /config.tar.bz2 -C /config --strip-components=1;
+          tar --exclude=$HOME/.bashrc -jxvf /config.tar.bz2 -C $HOME --strip-components=1;
         fi;
-        #until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
         until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
         echo "All done!";
       '
     healthcheck:
-      test: [ "CMD-SHELL", "[ -d /config/xdg/config/JetBrains ]" ]
+      test: [ "CMD-SHELL", "[ -d $HOME/xdg/config/JetBrains ]" ]
             # test: [ "CMD-SHELL", "[ -d /tmp ]" ]
       interval: 1s
       timeout: 5s

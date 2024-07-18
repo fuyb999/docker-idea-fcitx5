@@ -67,18 +67,21 @@ ENV IDEA_VERSION="2024.1"
 ENV APP_NAME="IntelliJ IDEA ${IDEA_VERSION}" \
     S6_KILL_GRACETIME=8000
 
+# 提前修改HOME目录到/config 可以解决conda初始化时候需要同时在 /root/.bashrc 与 /config/.bashrc 下添加初始化脚本 系统与idea termnal才会同时生效问题
+ENV HOME=/config
 ENV XDG_SOFTWARE_HOME=/opt/apps
 ENV PKG_HOME=/config/packages
 ENV ENABLE_JDK=1
 ENV JDK_VERSION="17.0.10"
 ENV JAVA_HOME=$XDG_SOFTWARE_HOME/jdk-$JDK_VERSION
-ENV PATH=$JAVA_HOME/bin:$PATH
 
 ENV ENABLE_NODE=1
 ENV NODE_VERSION="16.19.1"
 
 ENV ENABLE_CONDA=0
 ENV CONDA_VERSION="2024.06-1"
+ENV ANACONDA_HOME=${XDG_SOFTWARE_HOME}/anaconda3-${CONDA_VERSION}
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Set internal environment variables.
 RUN \
