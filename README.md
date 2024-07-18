@@ -13,7 +13,7 @@ fcitx5-diagnose
 
 ## backup config
 ```shell
-tar --exclude=config/log --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
+tar --exclude=config/log --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
 # include idea plugins
-tar --exclude=config/log --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/python.zip -jcvf config-idea2014.1-plugins.tar.bz2 /config/
+tar --exclude=config/log --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/python.zip -jcvf config-idea2014.1-plugins.tar.bz2 /config/
 ```
