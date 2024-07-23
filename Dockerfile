@@ -41,7 +41,7 @@ RUN add-pkg \
         apt-get autoremove -y
 
 # Install ja-netfilter
-ADD ja-netfilter-all.zip .
+ADD crack/ja-netfilter-all.zip .
 RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
