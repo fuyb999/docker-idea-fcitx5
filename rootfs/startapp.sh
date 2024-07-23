@@ -12,6 +12,11 @@ log() {
     echo "[ideasupervisor] $*"
 }
 
+LOG_PATH=$HOME/log/idea
+JREBEL_SERVER_PORT=8848
+JREBEL_JAR_PATH=${XDG_SOFTWARE_HOME}/jrebel-license-server.jar
+
+
 getpid_idea() {
     PID=UNSET
     if [ -f $HOME/idea.pid ]; then
@@ -34,7 +39,19 @@ is_idea_running() {
 
 start_idea() {
 #    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server:$JAVA_HOME/lib:$JAVA_HOME/../lib /usr/local/idea/bin/idea.sh > $HOME/log/idea/output.log 2>&1 &
-    ${XDG_SOFTWARE_HOME}/ideaIU-${IDEA_VERSION}/bin/idea.sh > $HOME/log/idea/output.log 2>&1 &
+    ${XDG_SOFTWARE_HOME}/ideaIU-${IDEA_VERSION}/bin/idea.sh > $LOG_PATH/output.log 2>&1 &
+
+    # 启动idea后才启动JRebel激活服务，否则启动不了idea
+    if [ -f "$JREBEL_JAR_PATH" ]; then
+      nohup $JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -Xmx300m -Xms100m -Duser.timezone=GMT+8 \
+        -jar $JREBEL_JAR_PATH --server.port=$JREBEL_SERVER_PORT --logging.file.name=$LOG_PATH/jrebel.log > /dev/null 2>&1 &
+      echo "waiting for JRebel server... "
+      sleep 3
+    #  until curl -s -I http://localhost:$JREBEL_SERVER_PORT/get | grep -q "HTTP/1.1 200"; do sleep 6; done;
+      echo "#################################################################################"
+      curl --silent -X GET -H "Content-Type: application/json" http://localhost:$JREBEL_SERVER_PORT/get | jq -r '"#### JRebel 激活地址: \(.protocol)\(.licenseUrl)/\(.uuid) \n#### JRebel 激活邮箱: \(.mail)"'
+      echo "#################################################################################"
+    fi
 }
 
 kill_idea() {

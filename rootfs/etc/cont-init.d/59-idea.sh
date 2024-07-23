@@ -9,9 +9,13 @@ log() {
 
 #HOME=/config
 
+LOG_PATH=$HOME/log/idea
+
+JREBEL_JAR_PATH=${XDG_SOFTWARE_HOME}/jrebel-license-server.jar
+
 # Make sure mandatory directories exist.
-if [ ! -d "$HOME/log/idea" ]; then
-  mkdir -p $HOME/log/idea
+if [ ! -d "$LOG_PATH" ]; then
+  mkdir -p $LOG_PATH
 fi
 
 # Take ownership of the config directory content.
@@ -20,6 +24,10 @@ fi
 
 if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
   chmod +x -R $XDG_CACHE_HOME/JetBrains
+fi
+
+if [ -f "$PKG_HOME/jrebel-license-server-0.0.1.jar" ] && [ ! -f $JREBEL_JAR_PATH ] ; then
+  mv $PKG_HOME/jrebel-license-server-*.jar $JREBEL_JAR_PATH
 fi
 
 # Maximize only the main/initial window.
