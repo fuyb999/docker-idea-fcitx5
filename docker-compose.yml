@@ -5,7 +5,7 @@ services:
     image: docker-idea:ubuntu-22.04-v4.6.3
     volumes:
       - ${WORKSPACE}/config:/config:rw
-      - ${CONFIG_BACKUP_PATH:-/backup}:/backup
+      - ${CONFIG_BACKUP_PATH:-./backup}:/backup
 #    environment:
 #      - USER_ID=$(id -u)
 #      - GROUP_ID=$(id -g)
@@ -70,6 +70,7 @@ services:
         #     capabilities: [ "gpu" ]
     volumes:
       - ${WORKSPACE}/config:/config:rw
+      - ${WORKSPACE}/config/.root:/root:rw
       - ${WORKSPACE}/projects:/root/IdeaProjects:z
       - ${APPS_INSTALL_PATH:-/opt/container-apps}:/opt/apps:z
       - ./packages:/config/packages

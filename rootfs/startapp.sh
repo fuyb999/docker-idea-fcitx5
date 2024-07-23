@@ -46,8 +46,8 @@ start_idea() {
       nohup $JAVA_HOME/bin/java -Dfile.encoding=UTF-8 -Xmx300m -Xms100m -Duser.timezone=GMT+8 \
         -jar $JREBEL_JAR_PATH --server.port=$JREBEL_SERVER_PORT --logging.file.name=$LOG_PATH/jrebel.log > /dev/null 2>&1 &
       echo "waiting for JRebel server... "
-      sleep 3
-    #  until curl -s -I http://localhost:$JREBEL_SERVER_PORT/get | grep -q "HTTP/1.1 200"; do sleep 6; done;
+      sleep 1
+      until curl -s -I http://localhost:$JREBEL_SERVER_PORT/get | grep -q "HTTP/1.1 200"; do sleep 3; done;
       echo "#################################################################################"
       curl --silent -X GET -H "Content-Type: application/json" http://localhost:$JREBEL_SERVER_PORT/get | jq -r '"#### JRebel 激活地址: \(.protocol)\(.licenseUrl)/\(.uuid) \n#### JRebel 激活邮箱: \(.mail)"'
       echo "#################################################################################"
