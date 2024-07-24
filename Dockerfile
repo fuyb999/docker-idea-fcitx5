@@ -20,8 +20,8 @@ RUN sed -i -E 's/(archive|security).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /
 RUN add-pkg sudo && \
    adduser --disabled-password --gecos '' $DEFAULT_USER && \
    adduser $DEFAULT_USER sudo && \
-   echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-   echo '%${DEFAULT_USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+   echo "%${DEFAULT_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
   /etc/cont-init.d/10-init-users.sh
 
 # Install pkg
