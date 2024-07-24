@@ -11,11 +11,11 @@ services:
 #      - GROUP_ID=$(id -g)
     command: >
       bash -c '
-        if [ x${WORKSPACE} == x ]; then
+        if [ "x${WORKSPACE}" == "x" ]; then
           echo "Set the WORKSPACE environment variable in the .env file";
           exit 1;
         fi;
-        if [ x${APPS_INSTALL_PATH} == x ]; then
+        if [ "x${APPS_INSTALL_PATH}" == "x" ]; then
           echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
           exit 1;
         fi;
