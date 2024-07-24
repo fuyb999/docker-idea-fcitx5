@@ -4,20 +4,29 @@ ENV LANG=zh_CN.UTF-8
 ENV LANGUAGE=zh_CN:zh
 ENV LC_ALL=zh_CN.UTF-8
 ENV TZ=Asia/Shanghai
-ENV USER_ID=0
-ENV GROUP_ID=0
+
+ENV USER_ID=1000
+ENV GROUP_ID=1000
+ARG DEFAULT_USER=app
+ENV HOME_DIR=/home/$DEFAULT_USER
 
 ENV XMODIFIERS=@im=fcitx5
 ENV GTK_IM_MODULE=fcitx5
 ENV QT_IM_MODULE=fcitx5
-ENV WORKSPACES="/root/IdeaProjects"
+ENV WORKSPACES="$HOME_DIR/IdeaProjects"
 
-RUN sed -i "s/us.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/cn.archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g; s/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g" /etc/apt/sources.list
+RUN sed -i -E 's/(archive|security).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+
+RUN add-pkg sudo && \
+   adduser --disabled-password --gecos '' $DEFAULT_USER && \
+   adduser $DEFAULT_USER sudo && \
+   echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   echo '%${DEFAULT_USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+  /etc/cont-init.d/10-init-users.sh
 
 # Install pkg
 # python3 python3-dev python3-pip \
 # openjdk-17-jdk \
-
 RUN add-pkg \
     bash \
     curl \
@@ -42,7 +51,7 @@ RUN add-pkg \
 
 # Install ja-netfilter
 ADD crack/ja-netfilter-all.zip .
-RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all
+RUN unzip -oq ./ja-netfilter-all.zip -d /usr/local/ja-netfilter-all && rm -rf ./ja-netfilter-all.zip
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
@@ -56,11 +65,16 @@ ADD ./openbox /etc/openbox
 COPY idea.png .
 RUN \
     APP_ICON_URL=idea.png && \
-    install_app_icon.sh "$APP_ICON_URL"
+    install_app_icon.sh "$APP_ICON_URL" && \
+    rm -rf ./idea.png
 
 # Add files.
 COPY rootfs/. /
 RUN chmod +x /etc/cont-init.d/*.sh
+
+# Custom settings.
+RUN sed -i 's|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID"|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID" /home/app|g' /etc/cont-init.d/10-init-users.sh && \
+    sed -i -e "s|rm -rf .*|find /tmp -mindepth 1 -maxdepth 1 ! -name '.X11-unix' -exec rm -rf {} +|" /etc/cont-init.d/10-clean-tmp-dir.sh
 
 # Set environment variables.
 ENV IDEA_VERSION="2024.1"
@@ -97,4 +111,5 @@ LABEL \
       org.label-schema.version="v2.0.1" \
       org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
 
+#USER $DEFAULT_USER # 不能设置为普通用户 10-init-users.sh 没有权限执行
 WORKDIR "${WORKSPACES}"

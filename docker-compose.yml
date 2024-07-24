@@ -3,12 +3,15 @@ version: "3.8"
 services:
   setup:
     image: docker-idea:ubuntu-22.04-v4.6.3
+    build: .
+    #user: "1000:1000" # 不能设置这个
+    privileged: true
     volumes:
       - ${WORKSPACE}/config:/config:rw
       - ${CONFIG_BACKUP_PATH:-./backup}:/backup
-#    environment:
-#      - USER_ID=$(id -u)
-#      - GROUP_ID=$(id -g)
+    environment:
+      - USER_ID=${USER_ID}
+      - GROUP_ID=${GROUP_ID}
     command: >
       bash -c '
         if [ "x${WORKSPACE}" == "x" ]; then
@@ -25,7 +28,7 @@ services:
           if [ -f /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.0 ]; then
             cat /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.* > /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
             tar --exclude=/config/.bashrc -jxvf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2 -C /config --strip-components=1;
-            rm -rf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
+           rm -rf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
           elif [ -f /backup/config.tar.bz2 ]; then
             tar --exclude=/config/.bashrc -jxvf /backup/config.tar.bz2 -C /config --strip-components=1;
           else
@@ -48,12 +51,16 @@ services:
         condition: service_healthy
     image: docker-idea:ubuntu-22.04-v4.6.3
     build: .
+    privileged: true
     container_name: idea-docker
+    #    command: tail -f /dev/null
     ports:
       - "5900:5900"
     environment:
-#      - USER_ID=$(id -u)
-#      - GROUP_ID=$(id -g)
+      - USER_ID=${USER_ID}
+      - GROUP_ID=${GROUP_ID}
+      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # 系统范围内的DBus通信 共享宿主机dbus
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # tcp:host=192.168.50.104,port=12345  # 用户会话内的DBus通信 共享宿主机dbus
       - JDK_VERSION=${JDK_VERSION}
       - IDEA_VERSION=${IDEA_VERSION}
       - NODE_VERSION=${NODE_VERSION}
@@ -69,8 +76,11 @@ services:
         #     count: "all"
         #     capabilities: [ "gpu" ]
     volumes:
+            #  - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
+      - ${WORKSPACE}/config/.app:/home/app:rw
       - ${WORKSPACE}/config:/config:rw
-      - ${WORKSPACE}/config/.root:/root:rw
-      - ${WORKSPACE}/projects:/root/IdeaProjects:z
+      - ${WORKSPACE}/projects:/home/app/IdeaProjects:z
       - ${APPS_INSTALL_PATH:-/opt/container-apps}:/opt/apps:z
       - ./packages:/config/packages
