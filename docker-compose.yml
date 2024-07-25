@@ -65,9 +65,13 @@ services:
       - IDEA_VERSION=${IDEA_VERSION}
       - NODE_VERSION=${NODE_VERSION}
       - CONDA_VERSION=${CONDA_VERSION}
+      - DBEAVER_VERSION=${DBEAVER_VERSION}
+      - FIREFOX_VERSION=${FIREFOX_VERSION}
       - ENABLE_JDK=1
       - ENABLE_NODE=1
       - ENABLE_CONDA=1
+      - ENABLE_DBEAVER=1
+      - ENABLE_FIREFOX=1
         #  deploy:
         # resources:
         #reservations:

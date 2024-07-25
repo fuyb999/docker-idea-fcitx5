@@ -9,6 +9,10 @@ log() {
 
 #HOME=/config
 
+if [ -z "$(grep messagebus /etc/group)" ]; then
+  sudo addgroup messagebus
+fi
+
 if [ ! -d "$PKG_HOME" ]; then
   mkdir -p ${PKG_HOME}
 fi
@@ -33,4 +37,4 @@ if [ ! -f "${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz" ]; then
 fi
 
 mkdir -p $JAVA_HOME
-tar --strip-components=1 -xzf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JAVA_HOME
+tar --strip-components=1 -zxf ${PKG_HOME}/jdk-${JDK_VERSION}_linux-x64_bin.tar.gz -C $JAVA_HOME

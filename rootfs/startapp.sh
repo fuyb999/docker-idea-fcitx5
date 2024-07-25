@@ -52,6 +52,9 @@ start_idea() {
       curl --silent -X GET -H "Content-Type: application/json" http://localhost:$JREBEL_SERVER_PORT/get | jq -r '"#### JRebel 激活地址: \(.protocol)\(.licenseUrl)/\(.uuid) \n#### JRebel 激活邮箱: \(.mail)"'
       echo "#################################################################################"
     fi
+    # when pack config activate dbeaver
+    #export PATH=$JAVA_HOME/bin:$PATH
+    #dbeaver &
 }
 
 kill_idea() {

@@ -20,7 +20,7 @@ fi
 
 mkdir -p $IDEA_HOME && \
   tar -xzf ${PKG_HOME}/ideaIU-${IDEA_VERSION}.tar.gz --strip-components=1 -C $IDEA_HOME && \
-  echo "-javaagent:/usr/local/ja-netfilter-all/ja-netfilter.jar=jetbrains" >> $IDEA_HOME/bin/idea64.vmoptions && \
+  echo "-javaagent:${XDG_SOFTWARE_HOME}/ja-netfilter-all/ja-netfilter.jar=jetbrains" >> $IDEA_HOME/bin/idea64.vmoptions && \
   echo "--add-opens=java.base/jdk.internal.org.objectweb.asm=ALL-UNNAMED" >> $IDEA_HOME/bin/idea64.vmoptions && \
   echo "--add-opens=java.base/jdk.internal.org.objectweb.asm.tree=ALL-UNNAMED" >> $IDEA_HOME/bin/idea64.vmoptions
 

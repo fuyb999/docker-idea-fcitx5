@@ -52,7 +52,7 @@ index 1bb1b50..cfa0957 100755
 +unset DBUS_SESSION_BUS_WINDOWID
 +# fix 在 stateoverride 文件中发现未知的系统组 'messagebus'；该系统组在重载之前被移除。
 +if [ -z "$(grep messagebus /etc/group)" ]; then
-+  grep messagebus /etc/group
++  sudo addgroup messagebus
 +fi
 +sudo dbus-daemon --session --nofork --nosyslog --nopidfile --address=$DBUS_STARTER_ADDRESS >> /tmp/dbus.log 2>&1 &
 +DBUS_PID=$!

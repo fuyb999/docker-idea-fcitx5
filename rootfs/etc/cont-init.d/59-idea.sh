@@ -11,6 +11,7 @@ log() {
 
 LOG_PATH=$HOME/log/idea
 JREBEL_JAR_PATH=${XDG_SOFTWARE_HOME}/jrebel-license-server.jar
+JA_NETFILTER_PATH=${XDG_SOFTWARE_HOME}/ja-netfilter-all
 
 # Make sure mandatory directories exist.
 if [ ! -d "$LOG_PATH" ]; then
@@ -25,8 +26,14 @@ if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
   chmod +x -R $XDG_CACHE_HOME/JetBrains
 fi
 
-if [ -f "$PKG_HOME/jrebel-license-server-0.0.1.jar" ] && [ ! -f $JREBEL_JAR_PATH ] ; then
-  cp $PKG_HOME/jrebel-license-server-*.jar $JREBEL_JAR_PATH
+# Install ja-netfilter
+if [ -f "$PKG_HOME/crack/ja-netfilter-all.zip" ] && [ ! -d $JA_NETFILTER_PATH ] ; then
+  unzip -oq $PKG_HOME/crack/ja-netfilter-all.zip -d $JA_NETFILTER_PATH
+fi
+
+# Install jrebel-license-server
+if [ -f "$PKG_HOME/crack/jrebel-license-server-0.0.1.jar" ] && [ ! -f $JREBEL_JAR_PATH ] ; then
+  cp $PKG_HOME/crack/jrebel-license-server-*.jar $JREBEL_JAR_PATH
 fi
 
 # Maximize only the main/initial window.
