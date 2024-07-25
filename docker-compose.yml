@@ -35,6 +35,12 @@ services:
             echo "The config file not found"
           fi;
         fi;
+        if [ -f "/backup/External Tools.xml" ]; then
+          if [ ! -d "/config/xdg/config/JetBrains/IntelliJIdea2024.1/tools" ]; then
+            mkdir -p /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools
+          fi;
+          cp "/backup/External Tools.xml" /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools;
+        fi;
         until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
         echo "All done!";
       '
