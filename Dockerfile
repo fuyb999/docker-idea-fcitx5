@@ -50,7 +50,8 @@ RUN add-pkg \
         apt-get autoremove -y
 
 # libswt-gtk-4-java # for dbeaver
-RUN add-pkg libswt-gtk-4-java
+# libxtst6 libxss1 libgtk2.0-0 libgconf-2-4 # for oss-browser
+RUN add-pkg libswt-gtk-4-java libxtst6 libxss1 libgtk2.0-0 libgconf-2-4
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
