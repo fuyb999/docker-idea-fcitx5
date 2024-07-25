@@ -1,0 +1,76 @@
+diff --git a/Dockerfile b/Dockerfile
+index fd6b187..b7adaf2 100755
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -112,4 +112,8 @@ LABEL \
+       org.label-schema.vcs-url="https://gitee.com/HALOBING/docker-idea-fcitx5.git"
+ 
+ #USER $DEFAULT_USER # 不能设置为普通用户 10-init-users.sh 没有权限执行
++RUN add-pkg dbus dbus-x11
++ENV DBUS_STARTER_BUS_TYPE="session"
++ENV DBUS_STARTER_ADDRESS="unix:path=/var/run/dbus/system_bus_socket"
++ENV DBUS_SESSION_BUS_ADDRESS=$DBUS_STARTER_ADDRESS
+ WORKDIR "${WORKSPACES}"
+diff --git a/docker-compose.yml b/docker-compose.yml
+index c271e08..69aa231 100755
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -59,8 +59,8 @@ services:
+     environment:
+       - USER_ID=${USER_ID}
+       - GROUP_ID=${GROUP_ID}
+-      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # 系统范围内的DBus通信 共享宿主机dbus
+-      - DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # tcp:host=192.168.50.104,port=12345  # 用户会话内的DBus通信 共享宿主机dbus
++#      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # 系统范围内的DBus通信 共享宿主机dbus
++#      - DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # tcp:host=192.168.50.104,port=12345  # 用户会话内的DBus通信 共享宿主机dbus
+       - JDK_VERSION=${JDK_VERSION}
+       - IDEA_VERSION=${IDEA_VERSION}
+       - NODE_VERSION=${NODE_VERSION}
+@@ -77,8 +77,8 @@ services:
+         #     capabilities: [ "gpu" ]
+     volumes:
+             #  - /tmp/.X11-unix:/tmp/.X11-unix:ro
+-      - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
+-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
++#      - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
++#      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
+       - ${WORKSPACE}/config/.app:/home/app:rw
+       - ${WORKSPACE}/config:/config:rw
+       - ${WORKSPACE}/projects:/home/app/IdeaProjects:z
+diff --git a/openbox/startup.sh b/openbox/startup.sh
+index 1bb1b50..cfa0957 100755
+--- a/openbox/startup.sh
++++ b/openbox/startup.sh
+@@ -1,16 +1,17 @@
+ touch /var/run/openbox/openbox.ready &
+ 
+-# 禁用unicode,chttrans(简繁切换)插件，以解决ctrl+shift+f,ctrl+shift+u快捷键冲突
+-fcitx5 --disable=dbus,wayland,unicode,chttrans &
++# make dbus visible to other processes
++sudo mkdir -p /var/run/dbus/
++unset DBUS_SESSION_BUS_PID
++unset DBUS_SESSION_BUS_WINDOWID
++# fix 在 stateoverride 文件中发现未知的系统组 'messagebus'；该系统组在重载之前被移除。
++if [ -z "$(grep messagebus /etc/group)" ]; then
++  grep messagebus /etc/group
++fi
++sudo dbus-daemon --session --nofork --nosyslog --nopidfile --address=$DBUS_STARTER_ADDRESS >> /tmp/dbus.log 2>&1 &
++DBUS_PID=$!
++echo "[dbus-monitor] dbus started with PID $DBUS_PID"
++sleep 1
+ 
+-# dbus
+-#ENV DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/0/bus"
+-#RUN add-pkg dbus dbus-x11 \
+-#   &&  mkdir -p /var/run/dbus \
+-#   &&  chmod 755 /var/run/dbus
+-#addgroup messagebus
+-#useradd -g messagebus messagebus
+-#chown -R root:root /tmp/run/user/app
+-#dbus-launch --sh-syntax --exit-with-session > /dev/null &
+-#dbus-daemon --system &
+-#dbus-launch fcitx5 --disable=wayland,unicode,chttrans &
+\ No newline at end of file
++# 禁用unicode,chttrans(简繁切换)插件，以解决ctrl+shift+f,ctrl+shift+u快捷键冲突
++fcitx5 --disable=dbus,wayland,unicode,chttrans &
+\ No newline at end of file
