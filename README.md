@@ -14,7 +14,7 @@ fcitx5-diagnose
 ## backup config
 ```shell
 cp docker-idea-fcitx5/fcitx5/config /config/xdg/config/fcitx5/
-tar --exclude=config/log --exclude=/config/.root/IdeaProjects --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
+tar --exclude=config/log --exclude=/config/.root/IdeaProjects --exclude=logrotate/logrotate.status --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock -jcvf config.tar.bz2 /config/
 # include idea plugins
-tar --exclude=config/log --exclude=/config/.root/IdeaProjects --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/*.zip -jcvf - /config/ | split -b 99m -d -a 1 - config-idea2024.1-plugins.tar.bz2.
+tar --exclude=config/log --exclude=/config/.root/IdeaProjects --exclude=logrotate/logrotate.status --exclude=/config/.bashrc --exclude=/config/packages --exclude=IntelliJIdea2024.1/.lock --exclude=IntelliJIdea2024.1/plugins/*.zip -jcvf - /config/ | split -b 99m -d -a 1 - config-idea2024.1-plugins.tar.bz2.
 ```

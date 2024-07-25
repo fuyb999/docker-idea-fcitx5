@@ -14,8 +14,7 @@ log() {
 
 LOG_PATH=$HOME/log/idea
 JREBEL_SERVER_PORT=8848
-JREBEL_JAR_PATH=${XDG_SOFTWARE_HOME}/jrebel-license-server.jar
-
+JREBEL_JAR_PATH=${XDG_SOFTWARE_HOME}/jrebel-license-server/jrebel-license-server.jar
 
 getpid_idea() {
     PID=UNSET
@@ -52,6 +51,7 @@ start_idea() {
       curl --silent -X GET -H "Content-Type: application/json" http://localhost:$JREBEL_SERVER_PORT/get | jq -r '"#### JRebel 激活地址: \(.protocol)\(.licenseUrl)/\(.uuid) \n#### JRebel 激活邮箱: \(.mail)"'
       echo "#################################################################################"
     fi
+
     # when pack config activate dbeaver
     #export PATH=$JAVA_HOME/bin:$PATH
     #dbeaver &

@@ -32,18 +32,18 @@ tar --strip-components=1 -zxf ${PKG_HOME}/dbeaver-${DBEAVER_VERSION}-linux.gtk.x
 install
 
 # https://github.com/wgzhao/dbeaver-agent
-if [ -f "$PKG_HOME/crack/dbeaver/dbeaver-agent-1.0.jar" ] && [ ! -f "$XDG_SOFTWARE_HOME/dbeaver-agent-1.0.jar" ]; then
-  sudo cp $PKG_HOME/crack/dbeaver/dbeaver-agent-1.0.jar $XDG_SOFTWARE_HOME/dbeaver-agent.jar
+if [ -f "$PKG_HOME/crack/dbeaver/dbeaver-agent-1.0.jar" ] && [ ! -f "$DBEAVER_HOME/dbeaver-agent-1.0.jar" ]; then
+  sudo cp $PKG_HOME/crack/dbeaver/dbeaver-agent-1.0.jar $DBEAVER_HOME/dbeaver-agent.jar
 fi
 
 DBEAVER_CONFIG=$DBEAVER_HOME/dbeaver.ini
 if [ -z "$(grep dbeaver-agent $DBEAVER_CONFIG)" ]; then
-  sudo sed -i -e "/-vmargs/a\-javaagent:${XDG_SOFTWARE_HOME}/dbeaver-agent.jar" $DBEAVER_CONFIG
+  sudo sed -i -e "/-vmargs/a\-javaagent:${DBEAVER_HOME}/dbeaver-agent.jar" $DBEAVER_CONFIG
 fi
 
 #  && sudo ln -s $JAVA_HOME $DBEAVER_HOME/jre
 sudo rm -rf $DBEAVER_HOME/jre
-$JAVA_HOME/bin/java -cp $PKG_HOME/crack/dbeaver/libs/\*:$XDG_SOFTWARE_HOME/dbeaver-agent.jar \
+$JAVA_HOME/bin/java -cp $PKG_HOME/crack/dbeaver/libs/\*:$DBEAVER_HOME/dbeaver-agent.jar \
    dev.misakacloud.dbee.License \
    --product=dbeaver \
    --type=ee \
