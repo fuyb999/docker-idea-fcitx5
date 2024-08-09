@@ -61,6 +61,7 @@ services:
     container_name: idea-docker
     #    command: tail -f /dev/null
     ports:
+      - "5800:5800"
       - "5900:5900"
     environment:
       - USER_ID=${USER_ID}

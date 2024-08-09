@@ -42,6 +42,7 @@ RUN add-pkg \
     openssh-server \
     jq \
     language-pack-zh-hans fonts-wqy-zenhei \
+    libpulse-mainloop-glib0 \
     libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libswt-gtk-4-java && \
     # Install fcitx and fcitx-pinyin
     # fcitx5 fcitx5-chinese-addons
