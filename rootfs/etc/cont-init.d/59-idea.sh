@@ -21,6 +21,7 @@ fi
 # Take ownership of the config directory content.
 # /etc/cont-init.d/85-take-config-ownership.sh
 #chown -R $USER_ID:$GROUP_ID /config/*
+sudo chown $USER_ID:$GROUP_ID $WORKSPACES
 
 if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
   chmod +x -R $XDG_CACHE_HOME/JetBrains
