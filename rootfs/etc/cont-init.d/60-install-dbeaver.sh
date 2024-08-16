@@ -41,8 +41,7 @@ if [ -z "$(grep dbeaver-agent $DBEAVER_CONFIG)" ]; then
   sudo sed -i -e "/-vmargs/a\-javaagent:${DBEAVER_HOME}/dbeaver-agent.jar" $DBEAVER_CONFIG
 fi
 
-#  && sudo ln -s $JAVA_HOME $DBEAVER_HOME/jre
-sudo rm -rf $DBEAVER_HOME/jre
+sudo rm -rf $DBEAVER_HOME/jre && sudo ln -s $JAVA_HOME $DBEAVER_HOME/jre
 $JAVA_HOME/bin/java -cp $PKG_HOME/crack/dbeaver/libs/\*:$DBEAVER_HOME/dbeaver-agent.jar \
    dev.misakacloud.dbee.License \
    --product=dbeaver \
