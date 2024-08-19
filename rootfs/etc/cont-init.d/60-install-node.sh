@@ -11,7 +11,7 @@ export NODE_PATH=${XDG_SOFTWARE_HOME}/node-v${NODE_VERSION}
 
 install(){
   if [ -f "$NODE_PATH/bin/node" ]; then
-    ln -sf $NODE_PATH/bin/node /usr/local/bin/node
+    ln -sf $NODE_PATH/bin/* /usr/local/bin/
   fi
 }
 
