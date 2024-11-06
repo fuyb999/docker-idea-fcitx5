@@ -25,6 +25,7 @@ sudo chown $USER_ID:$GROUP_ID $WORKSPACES
 
 if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
   chmod +x -R $XDG_CACHE_HOME/JetBrains
+  find $XDG_CACHE_HOME/JetBrains -name '*.lock'        | xargs rm -f
 fi
 
 # Install ja-netfilter
