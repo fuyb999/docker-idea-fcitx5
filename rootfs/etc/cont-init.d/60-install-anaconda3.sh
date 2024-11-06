@@ -23,13 +23,9 @@ fi
 
 tee $HOME/.condarc << EOF
 envs_dirs:
-  - ${XDG_CONFIG_HOME}/Anaconda3/envs
-  - ${XDG_CONFIG_HOME}/.conda/envs
-  - ${XDG_CONFIG_HOME}/conda/conda/envs
+  - ${ANACONDA_HOME}/envs
 pkgs_dirs:
-  - ${XDG_CONFIG_HOME}/Anaconda3/pkgs
-  - ${XDG_CONFIG_HOME}/.conda/pkgs
-  - ${XDG_CONFIG_HOME}/conda/conda/pkgs
+  - ${ANACONDA_HOME}/pkgs
 auto_activate_base: true
 show_channel_urls: true
 channels:
