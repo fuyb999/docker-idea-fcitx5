@@ -9,6 +9,14 @@ sudo docker-compose -p user up
 ## fcitx5 details
 ``` shell
 fcitx5-diagnose
+
+docker run -p 3306:3306 --name mysql \
+-v /home/mysql/log:/var/log/mysql \
+-v /home/mysql/data:/var/lib/mysql \
+-v /home/mysql/conf:/etc/mysql \
+--restart=always \
+-e MYSQL_ROOT_PASSWORD=123456 \
+-d mysql:5.7
 ```
 
 ## backup config

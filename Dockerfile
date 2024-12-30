@@ -1,28 +1,4 @@
-FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.7
-
-ENV LANG=zh_CN.UTF-8
-ENV LANGUAGE=zh_CN:zh
-ENV LC_ALL=zh_CN.UTF-8
-ENV TZ=Asia/Shanghai
-
-ENV USER_ID=1000
-ENV GROUP_ID=1000
-ARG DEFAULT_USER=app
-ENV HOME_DIR=/home/$DEFAULT_USER
-
-ENV XMODIFIERS=@im=fcitx5
-ENV GTK_IM_MODULE=fcitx5
-ENV QT_IM_MODULE=fcitx5
-ENV WORKSPACES="$HOME_DIR/IdeaProjects"
-
-RUN sed -i -E 's/(archive|security).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-
-RUN add-pkg sudo && \
-   adduser --disabled-password --gecos '' $DEFAULT_USER && \
-   adduser $DEFAULT_USER sudo && \
-   echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-   echo "%${DEFAULT_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-  /etc/cont-init.d/10-init-users.sh
+FROM baseimage-gui-fcitx5:ubuntu-22.04-v4.6.7
 
 # Install pkg
 # python3 python3-dev python3-pip \
@@ -43,12 +19,7 @@ RUN add-pkg \
     jq \
     language-pack-zh-hans fonts-wqy-zenhei \
     libpulse-mainloop-glib0 \
-    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libswt-gtk-4-java && \
-    # Install fcitx and fcitx-pinyin
-    # fcitx5 fcitx5-chinese-addons
-    add-pkg fcitx5-* && \
-        apt-get purge -y dbus fcitx5-module-emoji fcitx5-frontend-* fcitx5-config-qt fcitx5-module-cloudpinyin* fcitx5-keyman fcitx5-sayura fcitx5-anthy fcitx5-chewing fcitx5-hangul fcitx5-kkc fcitx5-m17n fcitx5-mozc fcitx5-rime fcitx5-skk fcitx5-unikey fcitx5-module-lua-* fcitx5-module-pinyinhelper-dev fcitx5-module-punctuation-dev fcitx5-modules-dev && \
-        apt-get autoremove -y
+    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libswt-gtk-4-java
 
 # libswt-gtk-4-java # for dbeaver
 # libxtst6 libxss1 libgtk2.0-0 libgconf-2-4 # for oss-browser
