@@ -1,4 +1,4 @@
-FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.3
+FROM jlesage/baseimage-gui:ubuntu-22.04-v4.6.7
 
 ENV LANG=zh_CN.UTF-8
 ENV LANGUAGE=zh_CN:zh
@@ -34,7 +34,7 @@ RUN add-pkg \
     vim \
     tar \
     bzip2 \
-    7zip \
+    p7zip-full \
     git \
     unzip \
     zip \

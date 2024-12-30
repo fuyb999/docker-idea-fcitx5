@@ -1,97 +1,87 @@
 version: "3.8"
 
+x-setup-template: &setup-template
+  image: docker-idea:ubuntu-22.04-v4.6.7
+  build: .
+  privileged: true
+  volumes:
+    - ${WORKSPACE}/config:/config:rw
+    - ${CONFIG_BACKUP_PATH:-./backup}:/backup
+  environment:
+    - USER_ID=${USER_ID}
+    - GROUP_ID=${GROUP_ID}
+  command: >
+    bash -c '
+      if [ "x${WORKSPACE}" == "x" ]; then
+        echo "Set the WORKSPACE environment variable in the .env file";
+        exit 1;
+      fi;
+      if [ "x${APPS_INSTALL_PATH}" == "x" ]; then
+        echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
+        exit 1;
+      fi;
+      if [ ! -d /config/xdg/config/JetBrains ]; then
+        echo "Restore idea config";
+        sleep 1;
+        if [ -f /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.0 ]; then
+          cat /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.* > /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
+          tar -jxvf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2 -C /config --strip-components=1;
+         rm -rf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
+        elif [ -f /backup/config.tar.bz2 ]; then
+          tar -jxvf /backup/config.tar.bz2 -C /config --strip-components=1;
+        else
+          echo "The config file not found"
+        fi;
+      fi;
+      if [ -f "/backup/External Tools.xml" ]; then
+        if [ ! -d "/config/xdg/config/JetBrains/IntelliJIdea2024.1/tools" ]; then
+          mkdir -p /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools
+        fi;
+        cp "/backup/External Tools.xml" /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools;
+      fi;
+      until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
+      echo "All done!";
+    '
+  healthcheck:
+    test: [ "CMD-SHELL", "[ -d /config/xdg/state/logrotate ]" ]
+    interval: 10s
+    timeout: 5s
+    retries: 120
+    start_period: 3s
+
+x-idea-docker-template: &idea-docker-template
+  env_file:
+    - .env
+  image: docker-idea:ubuntu-22.04-v4.6.7
+  build: .
+  privileged: true
+  container_name: idea-docker
+  ports:
+    - "5800:5800"
+    - "5900:5900"
+#  deploy:
+#    resources:
+#      reservations:
+#        devices:
+#          - driver: "nvidia"
+#            count: "all"
+#            capabilities: [ "gpu" ]
+  volumes:
+    #  - /tmp/.X11-unix:/tmp/.X11-unix:ro
+    - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
+    - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
+    - ${WORKSPACE}/config/.app:/home/app:rw
+    - ${WORKSPACE}/config:/config:rw
+    - ${WORKSPACE}/projects:/home/app/IdeaProjects:z
+    - ${APPS_INSTALL_PATH:-/opt/container-apps}:/opt/apps:z
+    - ./packages:/config/packages
+
 services:
   setup:
-    image: docker-idea:ubuntu-22.04-v4.6.3
-    build: .
-    #user: "1000:1000" # 不能设置这个
-    privileged: true
-    volumes:
-      - ${WORKSPACE}/config:/config:rw
-      - ${CONFIG_BACKUP_PATH:-./backup}:/backup
-    environment:
-      - USER_ID=${USER_ID}
-      - GROUP_ID=${GROUP_ID}
-    command: >
-      bash -c '
-        if [ "x${WORKSPACE}" == "x" ]; then
-          echo "Set the WORKSPACE environment variable in the .env file";
-          exit 1;
-        fi;
-        if [ "x${APPS_INSTALL_PATH}" == "x" ]; then
-          echo "Set the APPS_INSTALL_PATH environment variable in the .env file";
-          exit 1;
-        fi;
-        if [ ! -d /config/xdg/config/JetBrains ]; then
-          echo "Restore idea config";
-          sleep 1;
-          if [ -f /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.0 ]; then
-            cat /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2.* > /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
-            tar -jxvf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2 -C /config --strip-components=1;
-           rm -rf /backup/config-idea${IDEA_VERSION}-plugins.tar.bz2;
-          elif [ -f /backup/config.tar.bz2 ]; then
-            tar -jxvf /backup/config.tar.bz2 -C /config --strip-components=1;
-          else
-            echo "The config file not found"
-          fi;
-        fi;
-        if [ -f "/backup/External Tools.xml" ]; then
-          if [ ! -d "/config/xdg/config/JetBrains/IntelliJIdea2024.1/tools" ]; then
-            mkdir -p /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools
-          fi;
-          cp "/backup/External Tools.xml" /config/xdg/config/JetBrains/IntelliJIdea2024.1/tools;
-        fi;
-        until curl  -s -I http://idea-docker:5800 | grep -q "HTTP/1.1 200 OK"; do sleep 30; done;
-        echo "All done!";
-      '
-    healthcheck:
-      test: [ "CMD-SHELL", "[ -d /config/xdg/state/logrotate ]" ]
-#      test: [ "CMD-SHELL", "[ -d /tmp ]" ]
-      interval: 1s
-      timeout: 5s
-      retries: 120
+    << : *setup-template
 
   idea-docker:
+    << : *idea-docker-template
     depends_on:
       setup:
         condition: service_healthy
-    image: docker-idea:ubuntu-22.04-v4.6.3
-    build: .
-    privileged: true
-    container_name: idea-docker
-    #    command: tail -f /dev/null
-    ports:
-      - "5800:5800"
-      - "5900:5900"
-    environment:
-      - USER_ID=${USER_ID}
-      - GROUP_ID=${GROUP_ID}
-      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # 系统范围内的DBus通信 共享宿主机dbus
-      - DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket # tcp:host=192.168.50.104,port=12345  # 用户会话内的DBus通信 共享宿主机dbus
-      - JDK_VERSION=${JDK_VERSION}
-      - IDEA_VERSION=${IDEA_VERSION}
-      - NODE_VERSION=${NODE_VERSION}
-      - CONDA_VERSION=${CONDA_VERSION}
-      - DBEAVER_VERSION=${DBEAVER_VERSION}
-      - FIREFOX_VERSION=${FIREFOX_VERSION}
-      - ENABLE_JDK=1
-      - ENABLE_NODE=1
-      - ENABLE_CONDA=1
-      - ENABLE_DBEAVER=1
-      - ENABLE_FIREFOX=1
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: "nvidia"
-#              count: "all"
-#              capabilities: [ "gpu" ]
-    volumes:
-            #  - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
-      - ${WORKSPACE}/config/.app:/home/app:rw
-      - ${WORKSPACE}/config:/config:rw
-      - ${WORKSPACE}/projects:/home/app/IdeaProjects:z
-      - ${APPS_INSTALL_PATH:-/opt/container-apps}:/opt/apps:z
-      - ./packages:/config/packages
