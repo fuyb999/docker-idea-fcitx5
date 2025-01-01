@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -e # Exit immediately if a command exits with a non-zero status.
-set -u # Treat unset variables as an error.
 
 log() {
     echo "[cont-init.d] $(basename $0): $*"
@@ -9,6 +8,7 @@ log() {
 
 #HOME=/config
 
+XDG_CACHE_HOME=/config/xdg/config
 LOG_PATH=$HOME/log/idea
 JREBEL_SERVER_HOME=${XDG_SOFTWARE_HOME}/jrebel-license-server
 JA_NETFILTER_PATH=${XDG_SOFTWARE_HOME}/ja-netfilter-all
@@ -24,7 +24,6 @@ fi
 sudo chown $USER_ID:$GROUP_ID $WORKSPACES
 
 if [ -d "$XDG_CACHE_HOME/JetBrains" ]; then
-  chmod +x -R $XDG_CACHE_HOME/JetBrains
   find $XDG_CACHE_HOME/JetBrains -name '*.lock' | xargs rm -f
 fi
 
