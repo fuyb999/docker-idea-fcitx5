@@ -68,13 +68,15 @@ x-idea-docker-template: &idea-docker-template
             capabilities: [ "gpu" ]
   volumes:
     #  - /tmp/.X11-unix:/tmp/.X11-unix:ro
-    - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
-    - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
+#    - /run/user/${USER_ID}/bus:/run/user/${USER_ID}/bus
+#    - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # 共享宿主机dbus
     - ${WORKSPACE}/config/.app:/home/app:rw
     - ${WORKSPACE}/config:/config:rw
     - ${WORKSPACE}/projects:/home/app/IdeaProjects:z
     - ${APPS_INSTALL_PATH:-/opt/container-apps}:/opt/apps:z
     - ./packages:/config/packages
+    - ./.X11-unix/:/tmp/.X11-unix/:rw
+    - ~/Downloads:/home/app/Downloads
 
 services:
   setup:

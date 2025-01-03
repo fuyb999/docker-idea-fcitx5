@@ -13,6 +13,10 @@ if [ -z "$(grep messagebus /etc/group)" ]; then
   sudo addgroup messagebus
 fi
 
+if [ -z "$(grep plocate /etc/group)" ]; then
+  sudo addgroup plocate
+fi
+
 if [ ! -d "$PKG_HOME" ]; then
   mkdir -p ${PKG_HOME}
 fi

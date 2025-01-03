@@ -22,6 +22,100 @@ RUN add-pkg \
     libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 \
     libswt-gtk-4-java libxtst6 libxss1 libgtk2.0-0 libgconf-2-4
 
+RUN add-pkg  --no-install-recommends bash-completion \
+                        less \
+                        mlocate \
+                        nano \
+                        net-tools \
+                        p7zip-full \
+                        patch \
+                        pciutils \
+                        pkg-config \
+                        procps \
+                        psmisc \
+                        psutils \
+                        rsync \
+                        xmlstarlet \
+                        xz-utils \
+                        python3 \
+                        python3-numpy \
+                        python3-pip \
+                        python3-setuptools \
+                        python3-venv
+
+# Install X Server requirements
+# TODO: Refine this list of packages to only what is required.
+ENV \
+    XORG_SOCKET_DIR="/tmp/.X11-unix" \
+    XDG_RUNTIME_DIR="/tmp/.X11-unix/run" \
+    XDG_SESSION_TYPE="x11" \
+    FORCE_X11_DUMMY_CONFIG="false"
+RUN \
+    add-pkg --no-install-recommends \
+            avahi-utils \
+            dbus-x11 \
+            libxcomposite-dev \
+            libxcursor1 \
+            wmctrl \
+            libfuse2 \
+            x11-utils \
+            x11-xfs-utils \
+            x11-xkb-utils \
+            x11-xserver-utils \
+            xauth \
+            xbindkeys \
+            xclip \
+            xcvt \
+            xdotool \
+            xfishtank \
+            xfonts-base \
+            xinit \
+            xorg \
+            xserver-xorg-core \
+            xserver-xorg-input-evdev \
+            xserver-xorg-input-libinput \
+            xserver-xorg-legacy \
+            xserver-xorg-video-all \
+            xserver-xorg-video-dummy
+
+RUN \
+    add-pkg --no-install-recommends \
+            libdbus-1-3 \
+            libegl1 \
+            libgtk-3-0 \
+            libgtk2.0-0 \
+            libsdl2-2.0-0 \
+            fonts-vlgothic \
+            gedit \
+            imagemagick \
+            msttcorefonts \
+            xdg-utils \
+            xfce4 \
+            xfce4-terminal \
+            tcpdump \
+            xprintidle
+
+RUN add-pkg supervisor kmod
+
+RUN rm -f \
+            /usr/share/applications/software-properties-drivers.desktop \
+            /usr/share/applications/xfce4-about.desktop \
+            /usr/share/applications/xfce4-session-logout.desktop \
+            # Hide these apps. They can be displayed if a user really wants them.
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-accessibility-settings.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-color-settings.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-mail-reader.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-web-browser.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/vim.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar-settings.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar.desktop \
+            && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/display-im6.q16.desktop \
+            # These are named specifically for Debain
+            # Force these apps to be "System" Apps rather than "Categories=System;Utility;Core;GTK;Filesystem;"
+            && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/xfce4-appfinder.desktop \
+            && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/thunar-bulk-rename.desktop \
+            && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/org.gnome.gedit.desktop
+
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
   && sed -i 's#touch /var/run/openbox/openbox.ready#sh -c /etc/services.d/openbox/startup.sh#' /etc/services.d/openbox/params
@@ -44,6 +138,14 @@ RUN \
 # Custom settings.
 RUN sed -i 's|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID"|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID" /home/app|g' /etc/cont-init.d/10-init-users.sh && \
     sed -i -e "s|rm -rf .*|find /tmp -mindepth 1 -maxdepth 1 ! -name '.X11-unix' -exec rm -rf {} +|" /etc/cont-init.d/10-clean-tmp-dir.sh
+
+ENV \
+    DISPLAY_CDEPTH="24" \
+    DISPLAY_REFRESH="120" \
+    DISPLAY_SIZEH="1080" \
+    DISPLAY_SIZEW="1920" \
+    DISPLAY_VIDEO_PORT="DFP" \
+    DISPLAY=":55"
 
 # Set environment variables.
 ENV IDEA_VERSION="2024.1"
