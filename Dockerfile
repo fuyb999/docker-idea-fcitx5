@@ -1,4 +1,4 @@
-FROM baseimage-gui-fcitx5:ubuntu-22.04-v4.6.7
+FROM fuyb/baseimage-gui-fcitx5:ubuntu-22.04-v4.6.7
 
 # Install pkg
 # python3 python3-dev python3-pip \
@@ -19,7 +19,7 @@ RUN add-pkg \
     jq \
     language-pack-zh-hans fonts-wqy-zenhei \
     libpulse-mainloop-glib0 \
-    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 libswt-gtk-4-java \
+    libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 \
     libswt-gtk-4-java libxtst6 libxss1 libgtk2.0-0 libgconf-2-4
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
@@ -30,16 +30,16 @@ RUN chmod +x /etc/services.d/openbox/startup.sh \
 # Apline: RUN sed-patch 's/Navigator/unknown/g' /etc/openbox/main-window-selection.xml
 ADD ./openbox /etc/openbox
 
+# Add files.
+COPY rootfs/. /
+RUN chmod +x /etc/cont-init.d/*.sh
+
 # Generate and install favicons.
 COPY idea.png .
 RUN \
     APP_ICON_URL=idea.png && \
     install_app_icon.sh "$APP_ICON_URL" && \
     rm -rf ./idea.png
-
-# Add files.
-COPY rootfs/. /
-RUN chmod +x /etc/cont-init.d/*.sh
 
 # Custom settings.
 RUN sed -i 's|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID"|add_user --allow-duplicate app "$USER_ID" "$GROUP_ID" /home/app|g' /etc/cont-init.d/10-init-users.sh && \
