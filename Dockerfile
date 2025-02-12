@@ -20,7 +20,8 @@ RUN add-pkg \
     language-pack-zh-hans fonts-wqy-zenhei \
     libpulse-mainloop-glib0 \
     libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 \
-    libswt-gtk-4-java libxtst6 libxss1 libgtk2.0-0 libgconf-2-4
+    libswt-gtk-4-java libxtst6 libxss1 libgtk2.0-0 libgconf-2-4 \
+    libxcb-image0 libxcb-render-util0 libxcb-shape0
 
 COPY ./openbox/startup.sh /etc/services.d/openbox/
 RUN chmod +x /etc/services.d/openbox/startup.sh \
